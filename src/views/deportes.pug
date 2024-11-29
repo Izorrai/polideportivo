@@ -1,0 +1,7 @@
+extends layout.pug
+
+block content
+  h2 Lista de Deportes
+  ul
+    each deporte in deportes
+      li= deporte.nombre
