@@ -51,17 +51,18 @@ INSERT INTO instalaciones_deportes (instalacion_id, deporte_id) VALUES
 (5, 10); -- Sala Multiusos - Yoga
 
 -- Inserts para clientes
-INSERT INTO clientes (nombre, apellidos, dni, telefono, email) VALUES
-('Luis', 'Martínez Ruiz', 'A1111111B', '611222333', 'luis@email.com'),
-('Carmen', 'García Pérez', 'B2222222C', '622333444', 'carmen@email.com'),
-('Jorge', 'López García', 'C3333333D', '633444555', 'jorge@email.com'),
-('Isabel', 'Pérez Sanz', 'D4444444E', '644555666', 'isabel@email.com'),
-('Alberto', 'Sanz López', 'E5555555F', '655666777', 'alberto@email.com'),
-('Marina', 'Ruiz Gil', 'F6666666G', '666777888', 'marina@email.com'),
-('Roberto', 'Gil Torres', 'G7777777H', '677888999', 'roberto@email.com'),
-('Patricia', 'Torres Luna', 'H8888888I', '688999000', 'patricia@email.com'),
-('Diego', 'Luna Vega', 'I9999999J', '699000111', 'diego@email.com'),
-('Lucía', 'Vega Ruiz', 'J1010101K', '600111222', 'lucia@email.com');
+INSERT INTO clientes (`email`, `contrasena`,`nombre`, `apellido`, `telefono`, `direccion`,`roles`) 
+VALUES 
+('usuario1@example.com', '$2b$10$OdGXneb4cCL4DrRkirihmeU6aBvwwYQ7iQMM1MAfQmdWaw19sI9mK', 'Juan', 'Pérez', '123456789', 'Calle Falsa 123', 'ADMIN'),
+('usuario2@example.com', '$2b$10$OdGXneb4cCL4DrRkirihmeU6aBvwwYQ7iQMM1MAfQmdWaw19sI9mK', 'María', 'Gómez', '987654321', 'Avenida Libertador 456','CLIENTE'),
+('usuario3@example.com', '$2b$10$OdGXneb4cCL4DrRkirihmeU6aBvwwYQ7iQMM1MAfQmdWaw19sI9mK', 'Carlos', 'Rodríguez', '123987456', 'Calle del Sol 789','CLIENTE'),
+('usuario4@example.com', '$2b$10$OdGXneb4cCL4DrRkirihmeU6aBvwwYQ7iQMM1MAfQmdWaw19sI9mK', 'Ana', 'López', '456123789', 'Calle del Mar 101','CLIENTE'),
+('usuario5@example.com', '$2b$10$OdGXneb4cCL4DrRkirihmeU6aBvwwYQ7iQMM1MAfQmdWaw19sI9mK', 'Pedro', 'Sánchez', '789456123', 'Calle Real 202','CLIENTE'),
+('usuario6@example.com', '$2b$10$OdGXneb4cCL4DrRkirihmeU6aBvwwYQ7iQMM1MAfQmdWaw19sI9mK', 'Luisa', 'Morales', '321654987', 'Calle Larga 303', 'ADMIN'),
+('usuario7@example.com', '$2b$10$OdGXneb4cCL4DrRkirihmeU6aBvwwYQ7iQMM1MAfQmdWaw19sI9mK', 'José', 'Fernández', '654987321', 'Calle Nueva 404','CLIENTE'),
+('usuario8@example.com', '$2b$10$OdGXneb4cCL4DrRkirihmeU6aBvwwYQ7iQMM1MAfQmdWaw19sI9mK', 'Marta', 'Díaz', '987321654', 'Avenida Central 505','CLIENTE'),
+('usuario9@example.com', '$2b$10$OdGXneb4cCL4DrRkirihmeU6aBvwwYQ7iQMM1MAfQmdWaw19sI9mK', 'David', 'Jiménez', '321987654', 'Calle de la Luna 606','CLIENTE'),
+('usuario10@example.com', '$2b$10$OdGXneb4cCL4DrRkirihmeU6aBvwwYQ7iQMM1MAfQmdWaw19sI9mK', 'Laura', 'Martínez', '654321987', 'Calle 7 de Octubre 707','CLIENTE');
 
 -- Actualización de inserts para clases con horarios variados y realistas
 INSERT INTO clases (deporte_id, empleado_id, instalacion_id, nombre, nivel, capacidad_maxima, precio, dia_semana, hora_inicio, hora_fin) VALUES

@@ -118,14 +118,15 @@ DROP TABLE IF EXISTS `polideportivo`.`clientes` ;
 
 CREATE TABLE IF NOT EXISTS `polideportivo`.`clientes` (
   `cliente_id` INT NOT NULL AUTO_INCREMENT,
-  `nombre` VARCHAR(50) NOT NULL,
-  `apellidos` VARCHAR(100) NOT NULL,
-  `dni` VARCHAR(9) NOT NULL,
-  `telefono` VARCHAR(15) NULL DEFAULT NULL,
-  `email` VARCHAR(100) NULL DEFAULT NULL,
+  `email` VARCHAR(100) NOT NULL,
+  `contrasena` VARCHAR(80) NOT NULL,
+  `nombre` VARCHAR(100) NOT NULL,
+  `apellido` VARCHAR(45) NOT NULL,
+  `telefono` VARCHAR(20) NOT NULL,
+  `direccion` VARCHAR(255) NULL,
   `fecha_registro` DATETIME NULL DEFAULT CURRENT_TIMESTAMP,
+  `roles` ENUM("CLIENTE", "ADMIN") NULL DEFAULT 'CLIENTE',
   PRIMARY KEY (`cliente_id`),
-  UNIQUE INDEX `dni` (`dni` ASC) VISIBLE,
   UNIQUE INDEX `email` (`email` ASC) VISIBLE)
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8mb4
