@@ -4,6 +4,7 @@ import instalaciones from "./rutaInstalaciones.js";
 import inscripcion from "./rutaInscripcion.js";
 import clases from "./rutaClases.js";
 import pagos from "./rutaPagos.js";
+import usuarios from "./rutaClientes.js";
 import controladorCliente from "../controllers/clientes/controladorCliente.js";
 import jwt from "../config/jwt.js";
 import controladorApiAuth from "../controllers/auth/controladorApiAuth.js";
@@ -64,7 +65,7 @@ router.post("/login", controladorApiAuth.login);
 router.post("/registro", controladorApiAuth.registro);
 
 
-
+router.use('/clientes', usuarios);
 router.use('/deportes', deportes);
 router.use('/instalaciones', instalaciones);
 router.use('/inscripciones', inscripcion);

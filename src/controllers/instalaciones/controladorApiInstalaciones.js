@@ -23,6 +23,51 @@ async function obtenerInstalaciones(req, res) {
 }
 
 
+// controladorApiInstalaciones.js
+
+async function crearInstalaciones(req, res) {
+    console.log('Datos recibidos en el body:', req.body);
+    const controladorInstalaciones = new ControladorInstalaciones();
+    
+    try {
+        // Validar datos requeridos
+        if (!req.body || !req.body.nombre || !req.body.precio_hora || !req.body.estado) {
+            return res.status(400).json({
+                status: 'error',
+                message: 'Faltan datos necesarios para crear la instalación. Se requiere nombre, precio_hora y estado.'
+            });
+        }
+
+        // Crear la instalación
+        const nuevaInstalacion = await controladorInstalaciones.crearInstalaciones({
+            nombre: req.body.nombre,
+            descripcion: req.body.descripcion,
+            capacidad: req.body.capacidad,
+            estado: req.body.estado,
+            precio_hora: req.body.precio_hora
+        });
+
+        // Devolver respuesta
+        res.status(201).json({
+            status: 'success',
+            message: 'Instalación creada exitosamente',
+            data: nuevaInstalacion
+        });
+    } catch (error) {
+        console.error('Error al crear la instalación:', error);
+        res.status(500).json({
+            status: 'error',
+            message: 'Error al crear la instalación',
+            error: error.message || 'Error desconocido'
+        });
+    }
+}
+
+
+
+
+
+
 async function obtenerInstalacionesReservadas(req, res) {
     try {
        
@@ -293,6 +338,7 @@ export const functions = {
     obtenerInstalaciones,
     obtenerInstalacionesReservadas,
     obtenerInstalacionesReservadasPerfil,
+    crearInstalaciones,
     crearReservaPerfil,
     crearReserva
 };

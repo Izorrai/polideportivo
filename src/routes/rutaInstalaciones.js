@@ -8,6 +8,7 @@ router.get("/",controladorMostrarInstalaciones.mostrarInstalaciones);
 
 // API Routes
 router.get('/api', controladorApiInstalaciones.obtenerInstalaciones)
+router.post('/api/crear-instalaciones', controladorApiInstalaciones.crearInstalaciones)
 router.post('/api/crear', controladorApiInstalaciones.crearReserva)
 router.post('/api/crear-reserva', controladorApiInstalaciones.crearReservaPerfil)
 router.get('/api/disponibles', controladorApiInstalaciones.obtenerInstalacionesReservadas)

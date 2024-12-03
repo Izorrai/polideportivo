@@ -1,0 +1,597 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "API Polideportivo",
+    "version": "1.0.0",
+    "description": "API para gestión de polideportivo"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3001",
+      "description": "Servidor de desarrollo"
+    }
+  ],
+  "paths": {
+    "/login": {
+      "post": {
+        "tags": [
+          "Autenticacion"
+        ],
+        "summary": "Login de usuario",
+        "description": "Autentica un usuario y devuelve un token JWT",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "email",
+                  "contrasena"
+                ],
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "example": "usuario@ejemplo.com"
+                  },
+                  "contrasena": {
+                    "type": "string",
+                    "example": "contraseña123"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Login exitoso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "token": {
+                      "type": "string",
+                      "description": "Token JWT para autenticación"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Credenciales inválidas"
+          }
+        }
+      }
+    },
+    "/registro": {
+      "post": {
+        "tags": [
+          "Autenticación"
+        ],
+        "summary": "Registro de usuario",
+        "description": "Registra un nuevo usuario",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "email",
+                  "contrasena",
+                  "confirmacionContrasena"
+                ],
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "example": "usuario@ejemplo.com"
+                  },
+                  "contrasena": {
+                    "type": "string",
+                    "example": "contraseña123"
+                  },
+                  "confirmacionContrasena": {
+                    "type": "string",
+                    "example": "contraseña123"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Registro exitoso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "integer"
+                        },
+                        "email": {
+                          "type": "string"
+                        },
+                        "role": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Datos de registro inválidos"
+          }
+        }
+      }
+    },
+    "/perfil": {
+      "get": {
+        "tags": [
+          "Usuarios"
+        ],
+        "summary": "Obtener perfil del usuario",
+        "description": "Obtiene los datos del usuario autenticado",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Datos del usuario",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "integer"
+                    },
+                    "nombre": {
+                      "type": "string"
+                    },
+                    "email": {
+                      "type": "string"
+                    },
+                    "role": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/instalaciones": {
+      "get": {
+        "tags": [
+          "Instalaciones"
+        ],
+        "summary": "Obtener todas las instalaciones",
+        "description": "Lista todas las instalaciones disponibles",
+        "responses": {
+          "200": {
+            "description": "Lista de instalaciones",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "instalacion_id": {
+                        "type": "integer"
+                      },
+                      "nombre": {
+                        "type": "string"
+                      },
+                      "descripcion": {
+                        "type": "string"
+                      },
+                      "estado": {
+                        "type": "string"
+                      },
+                      "precio_hora": {
+                        "type": "number"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/instalaciones/mis-reservas": {
+      "get": {
+        "tags": [
+          "Reservas"
+        ],
+        "summary": "Obtener reservas del usuario",
+        "description": "Obtiene las reservas del usuario autenticado",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista de reservas del usuario",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "reserva_id": {
+                        "type": "integer"
+                      },
+                      "fecha": {
+                        "type": "string",
+                        "format": "date"
+                      },
+                      "hora_inicio": {
+                        "type": "string",
+                        "format": "time"
+                      },
+                      "hora_fin": {
+                        "type": "string",
+                        "format": "time"
+                      },
+                      "instalacion": {
+                        "$ref": "#/components/schemas/Instalacion"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/instalaciones/reservar": {
+      "post": {
+        "tags": [
+          "Reservas"
+        ],
+        "summary": "Crear nueva reserva",
+        "description": "Crea una nueva reserva de instalación",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "instalacion_id",
+                  "fecha",
+                  "hora_inicio",
+                  "hora_fin"
+                ],
+                "properties": {
+                  "instalacion_id": {
+                    "type": "integer"
+                  },
+                  "deporte_id": {
+                    "type": "integer"
+                  },
+                  "fecha": {
+                    "type": "string",
+                    "format": "date"
+                  },
+                  "hora_inicio": {
+                    "type": "string",
+                    "format": "time"
+                  },
+                  "hora_fin": {
+                    "type": "string",
+                    "format": "time"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Reserva creada",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "reserva": {
+                          "$ref": "#/components/schemas/Reserva"
+                        },
+                        "pago": {
+                          "$ref": "#/components/schemas/Pago"
+                        }
+                      }
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/inscripciones/mis-inscripciones": {
+      "get": {
+        "tags": [
+          "Inscripciones"
+        ],
+        "summary": "Obtener inscripciones del usuario",
+        "description": "Obtiene las inscripciones del usuario autenticado",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista de inscripciones del usuario",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "inscripcion_id": {
+                        "type": "integer"
+                      },
+                      "fecha_inscripcion": {
+                        "type": "string",
+                        "format": "date-time"
+                      },
+                      "estado": {
+                        "type": "string"
+                      },
+                      "reserva": {
+                        "$ref": "#/components/schemas/Reserva"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/inscripciones/crear-inscripcion": {
+      "post": {
+        "tags": [
+          "Inscripciones"
+        ],
+        "summary": "Crear nueva inscripcion",
+        "description": "Crea una nueva inscripcion",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "reserva_id"
+                ],
+                "properties": {
+                  "reserva_id": {
+                    "type": "integer"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Inscripcion creada",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "inscripcion": {
+                          "$ref": "#/components/schemas/Inscripcion"
+                        },
+                        "pago": {
+                          "$ref": "#/components/schemas/Pago"
+                        }
+                      }
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/pagos/mis-pagos": {
+      "get": {
+        "tags": [
+          "Pagos"
+        ],
+        "summary": "Obtener pagos del usuario",
+        "description": "Obtiene el historial de pagos del usuario autenticado",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista de pagos",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "pago_id": {
+                        "type": "integer"
+                      },
+                      "monto": {
+                        "type": "number"
+                      },
+                      "fecha_pago": {
+                        "type": "string",
+                        "format": "date-time"
+                      },
+                      "estado": {
+                        "type": "string"
+                      },
+                      "reserva": {
+                        "$ref": "#/components/schemas/Reserva"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    },
+    "schemas": {
+      "Reserva": {
+        "type": "object",
+        "properties": {
+          "reserva_id": {
+            "type": "integer"
+          },
+          "fecha": {
+            "type": "string",
+            "format": "date"
+          },
+          "hora_inicio": {
+            "type": "string",
+            "format": "time"
+          },
+          "hora_fin": {
+            "type": "string",
+            "format": "time"
+          },
+          "instalacion": {
+            "$ref": "#/components/schemas/Instalacion"
+          }
+        }
+      },
+      "Pago": {
+        "type": "object",
+        "properties": {
+          "pago_id": {
+            "type": "integer"
+          },
+          "monto": {
+            "type": "number"
+          },
+          "fecha_pago": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "estado": {
+            "type": "string"
+          }
+        }
+      },
+      "Instalacion": {
+        "type": "object",
+        "properties": {
+          "instalacion_id": {
+            "type": "integer"
+          },
+          "nombre": {
+            "type": "string"
+          },
+          "descripcion": {
+            "type": "string"
+          },
+          "estado": {
+            "type": "string"
+          },
+          "precio_hora": {
+            "type": "number"
+          }
+        }
+      },
+      "Inscripcion": {
+        "type": "object",
+        "properties": {
+          "inscripcion_id": {
+            "type": "integer"
+          },
+          "fecha_inscripcion": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "estado": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

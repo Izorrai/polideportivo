@@ -15,6 +15,17 @@ class ControladorInstalaciones {
     }
   }
 
+  async crearInstalaciones(datosInstalacion) {
+    try {
+      console.log('Datos recibidos:', datosInstalacion);
+      const nuevaInstalacion = await Instalacion.create(datosInstalacion);
+      return nuevaInstalacion;
+    } catch (error) {
+      console.error('Error al crear la instalación:', error);
+      throw error;
+    }
+  }
+
 
 
   async obtenerInstalacionesPorId(req, res) {

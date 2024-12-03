@@ -63,6 +63,33 @@ async function actualizarUsuario(req, res) {
   }
 }
 
+
+async function actualizarUsuarioPerfil(req, res) {
+  try {
+
+    const cliente_id = req.user.cliente_id;  
+    const { email, contrasena, nombre, apellido, telefono, direccion } =
+      req.body;
+   
+
+    const updatedUser = await controladorCliente.actualizarUsuarioPerfil(
+      email,
+      contrasena,
+      nombre,
+      apellido,
+      telefono,
+      direccion,
+      cliente_id
+    );
+    res.json({ usuario: updatedUser });
+  } catch (error) {
+    error.status ? res.status(error.status) : res.status(500);
+    res.json({ error: error.message });
+  }
+}
+
+
+
 async function eliminarUsuario(req, res) {
   try {
     const id = parseInt(req.params.id);
@@ -79,6 +106,7 @@ export const functions = {
   buscarUsuarioPorId,
   crearUsuario,
   actualizarUsuario,
+  actualizarUsuarioPerfil,
   eliminarUsuario,
 };
 

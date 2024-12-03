@@ -71,6 +71,31 @@ async function actualizarUsuario(email, contrasena, nombre, apellido, telefono, 
 
 
 
+
+async function actualizarUsuarioPerfil(email, contrasena, nombre, apellido, telefono, direccion, cliente_id) {
+
+  
+  const usuario = await Cliente.findByPk(cliente_id);
+  if (!usuario) {
+    throw new errors.USER_NOT_FOUND();
+  }
+  usuario.email = email || usuario.email;
+  usuario.contrasena = contrasena || usuario.contrasena;
+  usuario.nombre = nombre || usuario.nombre;
+  usuario.apellidio = apellido || usuario.apellido;
+  usuario.telefono = telefono || usuario.telefono;
+  usuario.direccion = direccion || usuario.direccion;
+  if(contrasena){
+    const hash = await hashcontrasena(contrasena);
+    usuario.contrasena=hash;
+  }
+
+  await usuario.save();
+  return usuario;
+}
+
+
+
 async function eliminarUsuario(id) {
   const borrarUsuario = await Cliente.findByPk(id);
     if(!borrarUsuario){
@@ -86,6 +111,7 @@ export const functions = {
     buscarPorEmail,
     crearUsuario,
     actualizarUsuario,
+    actualizarUsuarioPerfil,
     eliminarUsuario,
 
 }
