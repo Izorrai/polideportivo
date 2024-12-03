@@ -9,7 +9,10 @@ router.get("/",controladorMostrarInstalaciones.mostrarInstalaciones);
 // API Routes
 router.get('/api', controladorApiInstalaciones.obtenerInstalaciones)
 router.post('/api/crear', controladorApiInstalaciones.crearReserva)
+router.post('/api/crear-reserva', controladorApiInstalaciones.crearReservaPerfil)
 router.get('/api/disponibles', controladorApiInstalaciones.obtenerInstalacionesReservadas)
+router.get('/api/mis-reservas', controladorApiInstalaciones.obtenerInstalacionesReservadasPerfil)
+
 /* router.get('/api/:id', deportesController.obtenerDeportePorId);
 router.post('/api/crear', deportesController.crearDeporte);
 router.put('/api/dactualizar/:id', deportesController.actualizarDeporte);

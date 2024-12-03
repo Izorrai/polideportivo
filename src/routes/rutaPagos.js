@@ -6,5 +6,6 @@ const router = Router();
 
 // API Routes    
 router.get('/api', controladorPagos.obtenerPagos)
+router.get('/api/mis-pagos', controladorPagos.obtenerPagosPerfil)
 
 export default router;
