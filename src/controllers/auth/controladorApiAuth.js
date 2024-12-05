@@ -22,12 +22,6 @@ async function login(req, res) {
         const { email, contrasena } = req.body;
         const usuario = await controladorAuth.login(email, contrasena);
         
-        console.log("Usuario encontrado:", {
-            cliente_id: usuario.cliente_id,
-            email: usuario.email,
-            roles: usuario.roles
-        });
-
         const tokenData = {
             cliente_id: usuario.cliente_id,
             roles: usuario.roles
@@ -48,7 +42,27 @@ async function login(req, res) {
     }
 }
 
+
+async function logout(req, res) {
+    try {
+        req.session.destroy();
+        res.clearCookie('token');
+        res.json({ 
+            status: 'success',
+            message: 'Sesión cerrada correctamente' 
+        });
+    } catch (error) {
+        res.status(500).json({ 
+            status: 'error',
+            message: error.message 
+        });
+    }
+}
+
+
+
 export default {
     registro,
-    login
+    login,
+    logout
 }

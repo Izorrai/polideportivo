@@ -63,7 +63,7 @@ router.get('/perfil', jwt.verify, async (req, res) => {
 
 router.post("/login", controladorApiAuth.login);
 router.post("/registro", controladorApiAuth.registro);
-
+router.post("/logout", controladorApiAuth.logout);
 
 router.use('/clientes', usuarios);
 router.use('/deportes', deportes);

@@ -14,20 +14,27 @@ async function registro (nombre,apellido,email,telefono,direccion,contrasena,con
     return nuevoUsuario;
 }
 
-async function login(email,contrasena){
-    const usuario= await controladorCliente.buscarPorEmail(email);
-    if(!usuario){
+async function login(email, contrasena) {
+    const usuario = await controladorCliente.buscarPorEmail(email);
+    console.log('Usuario encontrado:', usuario ? usuario.toJSON() : null);
+    
+    if (!usuario) {
         throw new errors.USER_NOT_FOUND(); 
     }
-    const verificada = await verificarcontrasena(contrasena,usuario.contrasena);
-    if(!verificada){
+    
+    const verificada = await verificarcontrasena(contrasena, usuario.contrasena);
+    if (!verificada) {
         throw new errors.INVALID_CREDENTIALS();
     }
-    return usuario;
+    
+    // Recargar usuario para datos actualizados
+    const usuarioActualizado = await controladorCliente.buscarUserPorId(usuario.cliente_id);
+    console.log('Usuario actualizado:', usuarioActualizado ? usuarioActualizado.toJSON() : null);
+    
+    return usuarioActualizado;
 }
 
-
-export default{
+export default {
     registro,
     login
 }

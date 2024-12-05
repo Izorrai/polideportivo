@@ -68,7 +68,7 @@ async function actualizarUsuarioPerfil(req, res) {
   try {
 
     const cliente_id = req.user.cliente_id;  
-    const { email, contrasena, nombre, apellido, telefono, direccion } =
+    const { email, contrasena, nombre, apellido, telefono, direccion, roles } =
       req.body;
    
 
@@ -79,6 +79,7 @@ async function actualizarUsuarioPerfil(req, res) {
       apellido,
       telefono,
       direccion,
+      roles,
       cliente_id
     );
     res.json({ usuario: updatedUser });

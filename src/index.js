@@ -1,6 +1,6 @@
 import express from 'express'; // framework para crear el servidor
 import dotenv from 'dotenv'; // cargar variables de entorno
-import session from 'express-session';// para crear sesiones
+import session from 'express-session';// para crear sesiones */
 import router from './routes/router.js';// importar rutas
 
 dotenv.config();// cargar variables de entorno

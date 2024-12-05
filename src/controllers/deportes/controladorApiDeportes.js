@@ -95,7 +95,7 @@ async function actualizarDeporte(req, res) {
 async function eliminarDeporte(req, res) {
   const controladorDeportes = new ControladorDeportes();
   try {
-    const resultado = await controladorDeportes.EliminarDeporte(req.params.id);
+    const resultado = await controladorDeportes.borrarDeporte(req.params.id);
     if (!resultado) {
       return res.status(404).json({
         status: 'error',

@@ -22,6 +22,31 @@ async function obtenerInstalaciones(req, res) {
     }
 }
 
+async function actualizarInstalaciones(req, res) {
+    const controladorInstalaciones = new ControladorInstalaciones();
+    try {
+        const instalacionesActualizadas = await controladorInstalaciones.actualizarInstalaciones(instalacion_id, req.body);
+        if (!instalacionesActualizadas) {
+            return res.status(404).json({
+                status: 'error',
+                message: 'Instalaciones no encontradas'
+            });
+        }
+        res.status(200).json({
+            status: 'success',
+            message: 'Instalaciones actualizadas exitosamente',
+            data: instalacionesActualizadas
+        });
+    } catch (error) {
+        console.error('Error al actualizar las instalaciones:', error);
+        res.status(500).json({
+            status: 'error',
+            message: 'Error al actualizar las instalaciones',
+            error: error.message
+        });
+    }
+}
+
 
 // controladorApiInstalaciones.js
 
@@ -334,13 +359,41 @@ async function crearReservaPerfil(req, res) {
     }
 }
 
+async function eliminarInstalaciones(req, res) {
+    const controladorInstalaciones = new ControladorInstalaciones();
+    try {
+        const instalacionesEliminadas = await controladorInstalaciones.eliminarInstalaciones(req.params.id);
+        if (!instalacionesEliminadas) {
+            return res.status(404).json({
+                status: 'error',
+                message: 'Instalaciones no encontradas'
+            });
+        }
+        res.status(200).json({
+            status: 'success',
+            message: 'Instalaciones eliminadas exitosamente',
+            data: instalacionesEliminadas
+        });
+    } catch (error) {
+        console.error('Error al eliminar las instalaciones:', error);
+        res.status(500).json({
+            status: 'error',
+            message: 'Error al eliminar las instalaciones',
+            error: error.message
+        });
+    }
+    
+}
+
 export const functions = {
     obtenerInstalaciones,
     obtenerInstalacionesReservadas,
     obtenerInstalacionesReservadasPerfil,
+    actualizarInstalaciones,
     crearInstalaciones,
     crearReservaPerfil,
-    crearReserva
+    crearReserva,
+    eliminarInstalaciones,
 };
 
 export default functions;

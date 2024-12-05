@@ -1,40 +1,65 @@
 
-
-function isAuthenticated(req,res,next){
-    console.log(req.session);
-    if(req.session.user){
+function isAuthenticated(req, res, next) {
+   
+    const user = req.user || (req.session && req.session.user);
+    
+    if (user) {
         next();
-    }else{
-        res.redirect("/login")
+    } else {
+        return res.status(401).json({
+            status: 'error',
+            message: 'No estas autenticado'
+        });
     }
 }
 
-function isClient(req,res,next){
-    if(req.session.user && req.session.user.roles==="CLIENT"){
+function isClient(req, res, next) {
+   
+    const user = req.user || (req.session && req.session.user);
+    
+    if (user && user.roles === "CLIENTE") {
         next();
-    }else{
-        res.redirect("/login")
+    } else {
+        return res.status(401).json({
+            status: 'error',
+            message: 'No eres un cliente'
+        });
     }
 }
 
-function isAdmin(req,res,next){
-    if(req.session.user && req.session.user.roles==="ADMIN"){
+function isAdmin(req, res, next) {
+    console.log('Token decodificado en isAdmin:', req.user);
+    
+    if (req.user && req.user.roles === "ADMIN") {
+        console.log('Acceso ADMIN permitido');
         next();
-    }else{
-        res.redirect("/login")
+    } else {
+        console.log('Acceso ADMIN denegado. Roles:', req.user ? req.user.roles : 'no user');
+        return res.status(401).json({
+            status: 'error',
+            message: 'No eres administrativo'
+        });
     }
 }
 
-function adminOMismoId(req,res,next){
+
+
+
+
+function adminOMismoId(req, res, next) {
     const id = req.params.id;
-    if(req.session.user && (req.session.user.roles==="ADMIN" || req.session.user.usuario_id==id)){
+    
+    const user = req.user || (req.session && req.session.user);
+    
+    if (user && (user.roles === "ADMIN" || user.cliente_id == id)) {
         next();
-    }else{
-        res.redirect("/login")
+    } else {
+        return res.status(401).json({
+            status: 'error',
+            message: 'No eres ni administrativo ni cliente'
+        });
     }
 }
-
-
 
 export {
     isAuthenticated,

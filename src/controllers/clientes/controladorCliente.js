@@ -17,13 +17,20 @@ async function buscarUserPorId(id) {
   return usuario;
 }
 
-async function buscarPorEmail(email){
-    const usuario = await Cliente.findOne({
-        where: {
-            email: email
-        }
-    });
-    return usuario;
+async function buscarPorEmail(email) {
+  console.log('Buscando usuario con email:', email);
+  try {
+      const usuario = await Cliente.findOne({
+          where: {
+              email: email
+          }
+      });
+      console.log('Usuario encontrado:', usuario);
+      return usuario;
+  } catch (error) {
+      console.error('Error al buscar usuario:', error);
+      throw error;
+  }
 }
 
 
@@ -49,7 +56,7 @@ async function crearUsuario(nombre,apellido, email, telefono, direccion, contras
 }
 
 
-async function actualizarUsuario(email, contrasena, nombre, apellido, telefono, direccion) {
+async function actualizarUsuario(email, contrasena, nombre, apellido, telefono, direccion, roles) {
   const usuario = await Cliente.findByPk(id);
   if (!usuario) {
     throw new errors.USER_NOT_FOUND();
@@ -60,6 +67,7 @@ async function actualizarUsuario(email, contrasena, nombre, apellido, telefono, 
   usuario.apellidio = apellido || usuario.apellido;
   usuario.telefono = telefono || usuario.telefono;
   usuario.direccion = direccion || usuario.direccion;
+  usuario.roles = roles || usuario.roles;
   if(contrasena){
     const hash = await hashcontrasena(contrasena);
     usuario.contrasena=hash;
@@ -72,7 +80,7 @@ async function actualizarUsuario(email, contrasena, nombre, apellido, telefono, 
 
 
 
-async function actualizarUsuarioPerfil(email, contrasena, nombre, apellido, telefono, direccion, cliente_id) {
+async function actualizarUsuarioPerfil(email, contrasena, nombre, apellido, telefono, direccion, roles, cliente_id) {
 
   
   const usuario = await Cliente.findByPk(cliente_id);
@@ -85,6 +93,7 @@ async function actualizarUsuarioPerfil(email, contrasena, nombre, apellido, tele
   usuario.apellidio = apellido || usuario.apellido;
   usuario.telefono = telefono || usuario.telefono;
   usuario.direccion = direccion || usuario.direccion;
+  usuario.roles = roles || usuario.roles;
   if(contrasena){
     const hash = await hashcontrasena(contrasena);
     usuario.contrasena=hash;

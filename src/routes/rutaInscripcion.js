@@ -2,6 +2,7 @@ import {Router} from "express";
 
 import controladorInscripciones from "../controllers/inscripciones/controladorInscripciones.js";
 
+
 const router = Router();  
 
 // API Routes
