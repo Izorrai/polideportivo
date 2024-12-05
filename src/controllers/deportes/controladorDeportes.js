@@ -9,13 +9,13 @@ class ControladorDeportes {
       const deportes = await Deporte.findAll();
       
       if (!deportes)throw new errors.ERROR_LISTA_DEPORTES();
-      return deportes.map(deporte => deporte.get());
+      /* return deportes.map(deporte => deporte.get()); */
+      return deportes;
     } 
   
 
 
-  async ObtenerDeportePorId(id) {
-    
+  async ObtenerDeportePorId(id) {    
       const deporte = await Deporte.findByPk(id);
       
       if (!deporte)throw new errors.DEPORTE_NO_ENCONTRADO();
