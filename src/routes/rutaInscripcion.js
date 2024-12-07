@@ -1,25 +1,25 @@
 import {Router} from "express";
 
-import controladorInscripciones from "../controllers/inscripciones/controladorInscripciones.js";
+import controladorApiInscripciones from "../controllers/inscripciones/controladorApiInscripciones.js";
 
 
 const router = Router();  
 
 // API Routes
 
-router.get('/api', controladorInscripciones.obtenerInscripciones)
-router.post('/api/crear', controladorInscripciones.crearInscripcion)
+router.get('/api', controladorApiInscripciones.obtenerMisInscripciones)
+router.post('/api/crear', controladorApiInscripciones.crearInscripcion)
 
 
 router.get('/mis-inscripciones', async (req, res) => {
     console.log('Ruta mis-inscripciones - req.user:', req.user);
-    await controladorInscripciones.obtenerMisInscripciones(req, res);
+    await controladorApiInscripciones.obtenerMisInscripciones(req, res);
 });
 
 // Ruta para crear inscripción
 router.post('/crear-inscripcion', async (req, res) => {
     console.log('Ruta crear inscripción - req.user:', req.user);
-    await controladorInscripciones.crearInscripcionPerfil(req, res);
+    await controladorApiInscripciones.crearInscripcionPerfil(req, res);
 });
 /* router.get('/api/:id', deportesController.obtenerDeportePorId);
 router.post('/api/crear', deportesController.crearDeporte);

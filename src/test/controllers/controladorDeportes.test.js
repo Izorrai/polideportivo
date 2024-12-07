@@ -1,111 +1,109 @@
-// Mock simple del ControladorDeportes
+import { jest } from '@jest/globals';
+import ControladorDeportes from '../../controllers/deportes/controladorDeportes.js';
+import Deporte from '../../models/deportes.js';
 
-import ControladorDeportes from "../../controllers/deportes/controladorDeportes.js";
-import Deporte from "../../models/deportes.js";
-import {jest} from "@jest/globals";
-
-class MockControladorDeportes {
-    constructor() {
-        this.deportes = [
-            { id: 1, nombre: 'Fútbol', descripcion: 'Deporte de equipo' },
-            { id: 2, nombre: 'Baloncesto', descripcion: 'Deporte de canasta' }
-        ];
-    }
-
-    async TodosLosDeportes() {
-        return this.deportes;
-    }
-
-
-
-    async ObtenerDeportePorId(id) {
-        const deporte = this.deportes.find(d => d.id === id);
-        if (!deporte) throw new Error('Deporte no encontrado');
-        return deporte;
-    }
-
-    async crearDeporte(deporte) {
-        const { nombre, descripcion } = deporte;
-        if (!nombre || !descripcion) throw new Error('Faltan datos del deporte');
-        
-        const deporteExistente = this.deportes.find(d => d.nombre === nombre);
-        if (deporteExistente) throw new Error('El deporte ya existe');
-
-        const nuevoDeporte = {
-            id: this.deportes.length + 1,
-            nombre,
-            descripcion
-        };
-        
-        return nuevoDeporte;
-    }
-
-    async borrarDeporte(id) {
-        const deporte = this.deportes.find(d => d.id === id);
-        if (!deporte) throw new Error('Deporte no encontrado');
-        return deporte;
-    }
-}
-
+// Mockear los métodos del modelo Deporte
 Deporte.findAll = jest.fn();
 Deporte.findByPk = jest.fn();
-
-
+Deporte.create = jest.fn();
+Deporte.findOne = jest.fn();
+Deporte.destroy = jest.fn();
 
 describe('ControladorDeportes', () => {
-    let controlador;
+    let controladorDeporte;
+    
+    const deportesMock = [
+        { 
+            id: 1, 
+            nombre: 'Fútbol', 
+            descripcion: 'Deporte de equipo',
+            get: function() { return this; }
+        },
+        { 
+            id: 2, 
+            nombre: 'Baloncesto', 
+            descripcion: 'Deporte de canasta',
+            get: function() { return this; }
+        }
+    ];
 
     beforeEach(() => {
-        controlador = new MockControladorDeportes();
+        // Limpiar todos los mocks antes de cada test
+        jest.clearAllMocks();
+        controladorDeporte = new ControladorDeportes();
     });
 
     describe('TodosLosDeportes', () => {
         it('debe retornar una lista de deportes', async () => {
-            const deportesMock= [ { id: 1, nombre: 'Fútbol', descripcion: 'Deporte de equipo' },
-                { id: 2, nombre: 'Baloncesto', descripcion: 'Deporte de canasta' }]
-            
-                
             Deporte.findAll.mockResolvedValue(deportesMock);
 
-            const controladorDeporte = new ControladorDeportes();
             const deportes = await controladorDeporte.TodosLosDeportes();
             
+            expect(Deporte.findAll).toHaveBeenCalled();
             expect(Array.isArray(deportes)).toBeTruthy();
-            expect(deportes.length).toBe(2);
-            expect(deportes[0]).toHaveProperty('id');
-            expect(deportes[0]).toHaveProperty('nombre');
-            expect(deportes[0]).toHaveProperty('descripcion');
-            expect(deportes).toEqual(deportesMock);
+            expect(deportes).toHaveLength(2);
+            expect(deportes[0]).toEqual(expect.objectContaining({
+                id: 1,
+                nombre: 'Fútbol',
+                descripcion: 'Deporte de equipo'
+            }));
+        });
+
+        it('debe manejar errores al obtener deportes', async () => {
+            Deporte.findAll.mockRejectedValue(new Error('Error de base de datos'));
+
+            await expect(controladorDeporte.TodosLosDeportes())
+                .rejects
+                .toThrow('Error de base de datos');
         });
     });
 
     describe('ObtenerDeportePorId', () => {
         it('debe retornar un deporte cuando existe', async () => {
-            const deporte = await controlador.ObtenerDeportePorId(1);
+            Deporte.findByPk.mockResolvedValue(deportesMock[0]);
 
-            expect(deporte.id).toBe(1);
-            expect(deporte.nombre).toBe('Fútbol');
+            const deporte = await controladorDeporte.ObtenerDeportePorId(1);
+
+            expect(Deporte.findByPk).toHaveBeenCalledWith(1);
+            expect(deporte).toEqual(expect.objectContaining({
+                id: 1,
+                nombre: 'Fútbol',
+                descripcion: 'Deporte de equipo'
+            }));
         });
 
         it('debe lanzar error cuando el deporte no existe', async () => {
-            await expect(controlador.ObtenerDeportePorId(999))
+            Deporte.findByPk.mockResolvedValue(null);
+
+            await expect(controladorDeporte.ObtenerDeportePorId(999))
                 .rejects
                 .toThrow('Deporte no encontrado');
         });
     });
 
     describe('crearDeporte', () => {
+        const nuevoDeporte = {
+            nombre: 'Tenis',
+            descripcion: 'Deporte de raqueta'
+        };
+
         it('debe crear un nuevo deporte correctamente', async () => {
-            const nuevoDeporte = {
+            Deporte.findOne.mockResolvedValue(null);
+            Deporte.create.mockResolvedValue({
+                id: 3,
+                ...nuevoDeporte,
+                get: function() { return this; }
+            });
+
+            const resultado = await controladorDeporte.crearDeporte(nuevoDeporte);
+
+            expect(Deporte.findOne).toHaveBeenCalled();
+            expect(Deporte.create).toHaveBeenCalledWith(nuevoDeporte);
+            expect(resultado).toEqual(expect.objectContaining({
+                id: 3,
                 nombre: 'Tenis',
                 descripcion: 'Deporte de raqueta'
-            };
-
-            const resultado = await controlador.crearDeporte(nuevoDeporte);
-
-            expect(resultado.id).toBe(3);
-            expect(resultado.nombre).toBe('Tenis');
-            expect(resultado.descripcion).toBe('Deporte de raqueta');
+            }));
         });
 
         it('debe lanzar error si faltan datos', async () => {
@@ -113,18 +111,15 @@ describe('ControladorDeportes', () => {
                 nombre: 'Tenis'
             };
 
-            await expect(controlador.crearDeporte(deporteIncompleto))
+            await expect(controladorDeporte.crearDeporte(deporteIncompleto))
                 .rejects
                 .toThrow('Faltan datos del deporte');
         });
 
         it('debe lanzar error si el deporte ya existe', async () => {
-            const deporteExistente = {
-                nombre: 'Fútbol',
-                descripcion: 'Otro deporte'
-            };
+            Deporte.findOne.mockResolvedValue(deportesMock[0]);
 
-            await expect(controlador.crearDeporte(deporteExistente))
+            await expect(controladorDeporte.crearDeporte(nuevoDeporte))
                 .rejects
                 .toThrow('El deporte ya existe');
         });
@@ -132,14 +127,28 @@ describe('ControladorDeportes', () => {
 
     describe('borrarDeporte', () => {
         it('debe borrar un deporte existente', async () => {
-            const resultado = await controlador.borrarDeporte(1);
+            const deporteABorrar = {
+                ...deportesMock[0],
+                destroy: jest.fn()
+            };
+            
+            Deporte.findByPk.mockResolvedValue(deporteABorrar);
 
-            expect(resultado.id).toBe(1);
-            expect(resultado.nombre).toBe('Fútbol');
+            const resultado = await controladorDeporte.borrarDeporte(1);
+
+            expect(Deporte.findByPk).toHaveBeenCalledWith(1);
+            expect(deporteABorrar.destroy).toHaveBeenCalled();
+            expect(resultado).toEqual(expect.objectContaining({
+                id: 1,
+                nombre: 'Fútbol',
+                descripcion: 'Deporte de equipo'
+            }));
         });
 
         it('debe lanzar error al intentar borrar un deporte que no existe', async () => {
-            await expect(controlador.borrarDeporte(999))
+            Deporte.findByPk.mockResolvedValue(null);
+
+            await expect(controladorDeporte.borrarDeporte(999))
                 .rejects
                 .toThrow('Deporte no encontrado');
         });

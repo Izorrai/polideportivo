@@ -1,7 +1,6 @@
+// deportes.js
 import { DataTypes } from 'sequelize';
 import sequelize from '../config/sequelize.js';
-
-import Instalacion from "./instalacion.js";
 
 const Deporte = sequelize.define('Deporte', {
     deporte_id: {
@@ -18,12 +17,9 @@ const Deporte = sequelize.define('Deporte', {
         allowNull: true
     }
 }, {
-    sequelize,   
+    sequelize,
     tableName: 'deportes',
     timestamps: false
-});
-
-    Deporte.belongsToMany(Instalacion, { through: 'instalaciones_deportes', foreignKey: 'deporte_id'
 });
 
 export default Deporte;

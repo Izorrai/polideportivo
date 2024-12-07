@@ -5,6 +5,8 @@ import inscripcion from "./rutaInscripcion.js";
 import clases from "./rutaClases.js";
 import pagos from "./rutaPagos.js";
 import usuarios from "./rutaClientes.js";
+import empleados from "./rutaEmpleados.js";
+import gastos from "./rutaGastos.js";
 import controladorCliente from "../controllers/clientes/controladorCliente.js";
 import jwt from "../config/jwt.js";
 import controladorApiAuth from "../controllers/auth/controladorApiAuth.js";
@@ -71,5 +73,7 @@ router.use('/instalaciones', instalaciones);
 router.use('/inscripciones', inscripcion);
 router.use('/clases', clases);
 router.use('/pagos', pagos);
+router.use('/empleados', empleados);
+router.use('/gastos', gastos);
 
 export default router;
