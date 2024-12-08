@@ -94,72 +94,6 @@
     
 
     
-        <h3 class="subsection-title">Members</h3>
-
-        
-            
-<h4 class="name" id="functions"><span class="type-signature">(constant) </span>functions<span class="type-signature"></span></h4>
-
-
-
-
-<div class="description">
-    Funciones disponibles para gestionar inscripciones.
-</div>
-
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="controladorInscripciones.js.html">controladorInscripciones.js</a>, <a href="controladorInscripciones.js.html#line106">line 106</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-        
-    
 
     
         <h3 class="subsection-title">Methods</h3>
@@ -170,7 +104,7 @@
     
 
     
-    <h4 class="name" id="crearNuevaInscripcion"><span class="type-signature">(async) </span>crearNuevaInscripcion<span class="signature">(cliente_id, clase_id)</span><span class="type-signature"> &rarr; {Promise.&lt;Object>}</span></h4>
+    <h4 class="name" id="actualizarPagos"><span class="type-signature">(async) </span>actualizarPagos<span class="signature">(req, res)</span><span class="type-signature"> &rarr; {void}</span></h4>
     
 
     
@@ -178,7 +112,7 @@
 
 
 <div class="description">
-    Crea una nueva inscripción para un cliente en una clase.
+    Actualiza el método de pago de un pago existente.
 </div>
 
 
@@ -214,13 +148,13 @@
 
         <tr>
             
-                <td class="name"><code>cliente_id</code></td>
+                <td class="name"><code>req</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">number</span>
+<span class="param-type">Object</span>
 
 
             
@@ -230,20 +164,20 @@
 
             
 
-            <td class="description last">El ID del cliente.</td>
+            <td class="description last">Objeto de la solicitud (Request), debe contener el parámetro `id` en la URL y el nuevo `metodo_pago` en el cuerpo.</td>
         </tr>
 
     
 
         <tr>
             
-                <td class="name"><code>clase_id</code></td>
+                <td class="name"><code>res</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">number</span>
+<span class="param-type">Object</span>
 
 
             
@@ -253,7 +187,7 @@
 
             
 
-            <td class="description last">El ID de la clase.</td>
+            <td class="description last">Objeto de la respuesta (Response).</td>
         </tr>
 
     
@@ -294,7 +228,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="controladorInscripciones.js.html">controladorInscripciones.js</a>, <a href="controladorInscripciones.js.html#line72">line 72</a>
+        <a href="controladorApiPagos.js.html">controladorApiPagos.js</a>, <a href="controladorApiPagos.js.html#line94">line 94</a>
     </li></ul></dd>
     
 
@@ -317,42 +251,13 @@
 
 
 
-<h5>Throws:</h5>
-
-        
-
-<dl>
-    <dt>
-        <div class="param-desc">
-        Si la clase no existe, la inscripción ya existe o la clase está completa.
-        </div>
-    </dt>
-    <dd></dd>
-    <dt>
-        <dl>
-            <dt>
-                Type
-            </dt>
-            <dd>
-                
-<span class="param-type">Error</span>
-
-
-            </dd>
-        </dl>
-    </dt>
-    <dd></dd>
-</dl>
-
-
-    
 
 
 <h5>Returns:</h5>
 
         
 <div class="param-desc">
-    La inscripción creada.
+    Responde con un JSON que contiene los detalles del pago actualizado.
 </div>
 
 
@@ -363,7 +268,7 @@
     </dt>
     <dd>
         
-<span class="param-type">Promise.&lt;Object></span>
+<span class="param-type">void</span>
 
 
     </dd>
@@ -381,7 +286,7 @@
     
 
     
-    <h4 class="name" id="obtenerInscripcionesCliente"><span class="type-signature">(async) </span>obtenerInscripcionesCliente<span class="signature">(cliente_id)</span><span class="type-signature"> &rarr; {Promise.&lt;Array>}</span></h4>
+    <h4 class="name" id="obtenerPagos"><span class="type-signature">(async) </span>obtenerPagos<span class="signature">(req, res)</span><span class="type-signature"> &rarr; {void}</span></h4>
     
 
     
@@ -389,7 +294,7 @@
 
 
 <div class="description">
-    Obtiene todas las inscripciones de un cliente específico.
+    Obtiene todos los pagos.
 </div>
 
 
@@ -425,13 +330,13 @@
 
         <tr>
             
-                <td class="name"><code>cliente_id</code></td>
+                <td class="name"><code>req</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">number</span>
+<span class="param-type">Object</span>
 
 
             
@@ -441,7 +346,30 @@
 
             
 
-            <td class="description last">El ID del cliente.</td>
+            <td class="description last">Objeto de la solicitud (Request).</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>res</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Objeto de la respuesta (Response).</td>
         </tr>
 
     
@@ -482,7 +410,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="controladorInscripciones.js.html">controladorInscripciones.js</a>, <a href="controladorInscripciones.js.html#line89">line 89</a>
+        <a href="controladorApiPagos.js.html">controladorApiPagos.js</a>, <a href="controladorApiPagos.js.html#line12">line 12</a>
     </li></ul></dd>
     
 
@@ -505,42 +433,13 @@
 
 
 
-<h5>Throws:</h5>
-
-        
-
-<dl>
-    <dt>
-        <div class="param-desc">
-        Si ocurre un error al obtener las inscripciones.
-        </div>
-    </dt>
-    <dd></dd>
-    <dt>
-        <dl>
-            <dt>
-                Type
-            </dt>
-            <dd>
-                
-<span class="param-type">Error</span>
-
-
-            </dd>
-        </dl>
-    </dt>
-    <dd></dd>
-</dl>
-
-
-    
 
 
 <h5>Returns:</h5>
 
         
 <div class="param-desc">
-    Lista de inscripciones del cliente.
+    Responde con un JSON que contiene todos los pagos.
 </div>
 
 
@@ -551,7 +450,7 @@
     </dt>
     <dd>
         
-<span class="param-type">Promise.&lt;Array></span>
+<span class="param-type">void</span>
 
 
     </dd>
@@ -569,7 +468,7 @@
     
 
     
-    <h4 class="name" id="obtenerTodasInscripciones"><span class="type-signature">(async) </span>obtenerTodasInscripciones<span class="signature">()</span><span class="type-signature"> &rarr; {Promise.&lt;Array>}</span></h4>
+    <h4 class="name" id="obtenerPagosPerfil"><span class="type-signature">(async) </span>obtenerPagosPerfil<span class="signature">(req, res)</span><span class="type-signature"> &rarr; {void}</span></h4>
     
 
     
@@ -577,7 +476,7 @@
 
 
 <div class="description">
-    Obtiene todas las inscripciones.
+    Obtiene los pagos del usuario autenticado.
 </div>
 
 
@@ -586,6 +485,78 @@
 
 
 
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>req</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Objeto de la solicitud (Request), debe contener el usuario autenticado en el objeto `user`.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>res</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Objeto de la respuesta (Response).</td>
+        </tr>
+
+    
+    </tbody>
+</table>
 
 
 
@@ -621,7 +592,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="controladorInscripciones.js.html">controladorInscripciones.js</a>, <a href="controladorInscripciones.js.html#line10">line 10</a>
+        <a href="controladorApiPagos.js.html">controladorApiPagos.js</a>, <a href="controladorApiPagos.js.html#line62">line 62</a>
     </li></ul></dd>
     
 
@@ -644,42 +615,13 @@
 
 
 
-<h5>Throws:</h5>
-
-        
-
-<dl>
-    <dt>
-        <div class="param-desc">
-        Si ocurre un error al obtener las inscripciones.
-        </div>
-    </dt>
-    <dd></dd>
-    <dt>
-        <dl>
-            <dt>
-                Type
-            </dt>
-            <dd>
-                
-<span class="param-type">Error</span>
-
-
-            </dd>
-        </dl>
-    </dt>
-    <dd></dd>
-</dl>
-
-
-    
 
 
 <h5>Returns:</h5>
 
         
 <div class="param-desc">
-    Lista de todas las inscripciones.
+    Responde con un JSON que contiene los pagos del usuario autenticado.
 </div>
 
 
@@ -690,7 +632,7 @@
     </dt>
     <dd>
         
-<span class="param-type">Promise.&lt;Array></span>
+<span class="param-type">void</span>
 
 
     </dd>
@@ -708,7 +650,7 @@
     
 
     
-    <h4 class="name" id="verificarCapacidadClase"><span class="type-signature">(async) </span>verificarCapacidadClase<span class="signature">(clase_id, capacidad_maxima)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="obtenerPagosPorId"><span class="type-signature">(async) </span>obtenerPagosPorId<span class="signature">(req, res)</span><span class="type-signature"> &rarr; {void}</span></h4>
     
 
     
@@ -716,7 +658,7 @@
 
 
 <div class="description">
-    Verifica si una clase ha alcanzado su capacidad máxima de inscripciones.
+    Obtiene un pago por su ID.
 </div>
 
 
@@ -752,13 +694,13 @@
 
         <tr>
             
-                <td class="name"><code>clase_id</code></td>
+                <td class="name"><code>req</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">number</span>
+<span class="param-type">Object</span>
 
 
             
@@ -768,20 +710,20 @@
 
             
 
-            <td class="description last">El ID de la clase.</td>
+            <td class="description last">Objeto de la solicitud (Request), debe contener el parámetro `id` en la URL.</td>
         </tr>
 
     
 
         <tr>
             
-                <td class="name"><code>capacidad_maxima</code></td>
+                <td class="name"><code>res</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">number</span>
+<span class="param-type">Object</span>
 
 
             
@@ -791,7 +733,7 @@
 
             
 
-            <td class="description last">La capacidad máxima de la clase.</td>
+            <td class="description last">Objeto de la respuesta (Response).</td>
         </tr>
 
     
@@ -832,7 +774,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="controladorInscripciones.js.html">controladorInscripciones.js</a>, <a href="controladorInscripciones.js.html#line54">line 54</a>
+        <a href="controladorApiPagos.js.html">controladorApiPagos.js</a>, <a href="controladorApiPagos.js.html#line37">line 37</a>
     </li></ul></dd>
     
 
@@ -855,208 +797,13 @@
 
 
 
-<h5>Throws:</h5>
-
-        
-
-<dl>
-    <dt>
-        <div class="param-desc">
-        Si la clase ha alcanzado su capacidad máxima.
-        </div>
-    </dt>
-    <dd></dd>
-    <dt>
-        <dl>
-            <dt>
-                Type
-            </dt>
-            <dd>
-                
-<span class="param-type">Error</span>
-
-
-            </dd>
-        </dl>
-    </dt>
-    <dd></dd>
-</dl>
-
-
-    
-
-
-
-
-
-
-
-        
-            
-
-    
-
-    
-    <h4 class="name" id="verificarClaseExistente"><span class="type-signature">(async) </span>verificarClaseExistente<span class="signature">(clase_id)</span><span class="type-signature"> &rarr; {Promise.&lt;Object>}</span></h4>
-    
-
-    
-
-
-
-<div class="description">
-    Verifica si una clase existe en la base de datos.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>clase_id</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">number</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">El ID de la clase.</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="controladorInscripciones.js.html">controladorInscripciones.js</a>, <a href="controladorInscripciones.js.html#line26">line 26</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-<h5>Throws:</h5>
-
-        
-
-<dl>
-    <dt>
-        <div class="param-desc">
-        Si la clase no existe.
-        </div>
-    </dt>
-    <dd></dd>
-    <dt>
-        <dl>
-            <dt>
-                Type
-            </dt>
-            <dd>
-                
-<span class="param-type">Error</span>
-
-
-            </dd>
-        </dl>
-    </dt>
-    <dd></dd>
-</dl>
-
-
-    
 
 
 <h5>Returns:</h5>
 
         
 <div class="param-desc">
-    La clase encontrada.
+    Responde con un JSON que contiene el pago solicitado por su ID.
 </div>
 
 
@@ -1067,202 +814,13 @@
     </dt>
     <dd>
         
-<span class="param-type">Promise.&lt;Object></span>
+<span class="param-type">void</span>
 
 
     </dd>
 </dl>
 
     
-
-
-
-
-
-        
-            
-
-    
-
-    
-    <h4 class="name" id="verificarInscripcionExistente"><span class="type-signature">(async) </span>verificarInscripcionExistente<span class="signature">(cliente_id, clase_id)</span><span class="type-signature"></span></h4>
-    
-
-    
-
-
-
-<div class="description">
-    Verifica si ya existe una inscripción para un cliente en una clase.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>cliente_id</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">number</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">El ID del cliente.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>clase_id</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">number</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">El ID de la clase.</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="controladorInscripciones.js.html">controladorInscripciones.js</a>, <a href="controladorInscripciones.js.html#line38">line 38</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-<h5>Throws:</h5>
-
-        
-
-<dl>
-    <dt>
-        <div class="param-desc">
-        Si la inscripción ya existe.
-        </div>
-    </dt>
-    <dd></dd>
-    <dt>
-        <dl>
-            <dt>
-                Type
-            </dt>
-            <dd>
-                
-<span class="param-type">Error</span>
-
-
-            </dd>
-        </dl>
-    </dt>
-    <dd></dd>
-</dl>
-
-
-    
-
-
 
 
 
@@ -1284,13 +842,13 @@
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#crearNuevaInscripcion">crearNuevaInscripcion</a></li><li><a href="global.html#functions">functions</a></li><li><a href="global.html#obtenerInscripcionesCliente">obtenerInscripcionesCliente</a></li><li><a href="global.html#obtenerTodasInscripciones">obtenerTodasInscripciones</a></li><li><a href="global.html#verificarCapacidadClase">verificarCapacidadClase</a></li><li><a href="global.html#verificarClaseExistente">verificarClaseExistente</a></li><li><a href="global.html#verificarInscripcionExistente">verificarInscripcionExistente</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#actualizarPagos">actualizarPagos</a></li><li><a href="global.html#obtenerPagos">obtenerPagos</a></li><li><a href="global.html#obtenerPagosPerfil">obtenerPagosPerfil</a></li><li><a href="global.html#obtenerPagosPorId">obtenerPagosPorId</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Sat Dec 07 2024 23:50:23 GMT+0100 (hora estándar de Europa central)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Sun Dec 08 2024 20:31:04 GMT+0100 (hora estándar de Europa central)
 </footer>
 
 <script> prettyPrint(); </script>
