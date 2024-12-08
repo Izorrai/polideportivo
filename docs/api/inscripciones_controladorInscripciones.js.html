@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: inscripciones/controladorInscripciones.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: inscripciones/controladorInscripciones.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import InscripcionClase from "../../models/InscripcionClase.js";
+import Clase from "../../models/clases.js";
+import errors from "../../helpers/errorInscripciones.js";
+
+/**
+ * Obtiene todas las inscripciones.
+ * @returns {Promise&lt;Array>} Lista de todas las inscripciones.
+ * @throws {Error} Si ocurre un error al obtener las inscripciones.
+ */
+async function obtenerTodasInscripciones() {
+    try {
+        const inscripciones = await InscripcionClase.findAll();
+        if (!inscripciones) throw new errors.INSCRIPCION_LIST_ERROR();
+        return inscripciones;
+    } catch (error) {
+        throw error;
+    }
+}
+
+/**
+ * Verifica si una clase existe en la base de datos.
+ * @param {number} clase_id - El ID de la clase.
+ * @returns {Promise&lt;Object>} La clase encontrada.
+ * @throws {Error} Si la clase no existe.
+ */
+async function verificarClaseExistente(clase_id) {
+    const clase = await Clase.findByPk(clase_id);
+    if (!clase) throw new errors.CLASE_NOT_FOUND();
+    return clase;
+}
+
+/**
+ * Verifica si ya existe una inscripción para un cliente en una clase.
+ * @param {number} cliente_id - El ID del cliente.
+ * @param {number} clase_id - El ID de la clase.
+ * @throws {Error} Si la inscripción ya existe.
+ */
+async function verificarInscripcionExistente(cliente_id, clase_id) {
+    const inscripcion = await InscripcionClase.findOne({
+        where: {
+            cliente_id: cliente_id,
+            clase_id: clase_id
+        }
+    });
+    if (inscripcion) throw new errors.INSCRIPCION_YA_EXISTE();
+}
+
+/**
+ * Verifica si una clase ha alcanzado su capacidad máxima de inscripciones.
+ * @param {number} clase_id - El ID de la clase.
+ * @param {number} capacidad_maxima - La capacidad máxima de la clase.
+ * @throws {Error} Si la clase ha alcanzado su capacidad máxima.
+ */
+async function verificarCapacidadClase(clase_id, capacidad_maxima) {
+    const inscripcionesCount = await InscripcionClase.count({
+        where: {
+            clase_id: clase_id
+        }
+    });
+    if (inscripcionesCount >= capacidad_maxima) {
+        throw new errors.CLASE_COMPLETA();
+    }
+}
+
+/**
+ * Crea una nueva inscripción para un cliente en una clase.
+ * @param {number} cliente_id - El ID del cliente.
+ * @param {number} clase_id - El ID de la clase.
+ * @returns {Promise&lt;Object>} La inscripción creada.
+ * @throws {Error} Si la clase no existe, la inscripción ya existe o la clase está completa.
+ */
+async function crearNuevaInscripcion(cliente_id, clase_id) {
+    const clase = await verificarClaseExistente(clase_id);
+    await verificarInscripcionExistente(cliente_id, clase_id);
+    await verificarCapacidadClase(clase_id, clase.capacidad_maxima);
+
+    return await InscripcionClase.create({
+        cliente_id: cliente_id,
+        clase_id: clase_id
+    });
+}
+
+/**
+ * Obtiene todas las inscripciones de un cliente específico.
+ * @param {number} cliente_id - El ID del cliente.
+ * @returns {Promise&lt;Array>} Lista de inscripciones del cliente.
+ * @throws {Error} Si ocurre un error al obtener las inscripciones.
+ */
+async function obtenerInscripcionesCliente(cliente_id) {
+    try {
+        const inscripciones = await InscripcionClase.findAll({
+            where: {
+                cliente_id: cliente_id
+            },
+            include: [Clase]
+        });
+        return inscripciones;
+    } catch (error) {
+        throw error;
+    }
+}
+
+/**
+ * Funciones disponibles para gestionar inscripciones.
+ */
+export const functions = {
+    obtenerTodasInscripciones,
+    crearNuevaInscripcion,
+    obtenerInscripcionesCliente,
+    verificarClaseExistente,
+    verificarInscripcionExistente,
+    verificarCapacidadClase
+};
+
+export default functions;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="ControladorClases.html">ControladorClases</a></li><li><a href="ControladorCliente.html">ControladorCliente</a></li><li><a href="ControladorDeportes.html">ControladorDeportes</a></li><li><a href="ControladorEmpleados.html">ControladorEmpleados</a></li><li><a href="ControladorGastos.html">ControladorGastos</a></li><li><a href="ControladorInstalaciones.html">ControladorInstalaciones</a></li><li><a href="ControladorPagos.html">ControladorPagos</a></li></ul><h3>Global</h3><ul><li><a href="global.html#actualizarClase">actualizarClase</a></li><li><a href="global.html#actualizarDeporte">actualizarDeporte</a></li><li><a href="global.html#actualizarEmpleado">actualizarEmpleado</a></li><li><a href="global.html#actualizarGasto">actualizarGasto</a></li><li><a href="global.html#actualizarInstalaciones">actualizarInstalaciones</a></li><li><a href="global.html#actualizarPagos">actualizarPagos</a></li><li><a href="global.html#actualizarUsuario">actualizarUsuario</a></li><li><a href="global.html#actualizarUsuarioPerfil">actualizarUsuarioPerfil</a></li><li><a href="global.html#buscarUsuarioPorId">buscarUsuarioPorId</a></li><li><a href="global.html#crearClase">crearClase</a></li><li><a href="global.html#crearDeporte">crearDeporte</a></li><li><a href="global.html#crearEmpleado">crearEmpleado</a></li><li><a href="global.html#crearGasto">crearGasto</a></li><li><a href="global.html#crearInscripcion">crearInscripcion</a></li><li><a href="global.html#crearInscripcionPerfil">crearInscripcionPerfil</a></li><li><a href="global.html#crearInstalaciones">crearInstalaciones</a></li><li><a href="global.html#crearNuevaInscripcion">crearNuevaInscripcion</a></li><li><a href="global.html#crearReserva">crearReserva</a></li><li><a href="global.html#crearReservaPerfil">crearReservaPerfil</a></li><li><a href="global.html#crearUsuario">crearUsuario</a></li><li><a href="global.html#eliminarClase">eliminarClase</a></li><li><a href="global.html#eliminarDeporte">eliminarDeporte</a></li><li><a href="global.html#eliminarEmpleado">eliminarEmpleado</a></li><li><a href="global.html#eliminarGasto">eliminarGasto</a></li><li><a href="global.html#eliminarInstalaciones">eliminarInstalaciones</a></li><li><a href="global.html#eliminarUsuario">eliminarUsuario</a></li><li><a href="global.html#functions">functions</a></li><li><a href="global.html#getAllUsuarios">getAllUsuarios</a></li><li><a href="global.html#obtenerClasePorId">obtenerClasePorId</a></li><li><a href="global.html#obtenerClases">obtenerClases</a></li><li><a href="global.html#obtenerClasesDisponibles">obtenerClasesDisponibles</a></li><li><a href="global.html#obtenerDeportePorId">obtenerDeportePorId</a></li><li><a href="global.html#obtenerDeportes">obtenerDeportes</a></li><li><a href="global.html#obtenerEmpleadoPorId">obtenerEmpleadoPorId</a></li><li><a href="global.html#obtenerEmpleados">obtenerEmpleados</a></li><li><a href="global.html#obtenerEstadisticasGastos">obtenerEstadisticasGastos</a></li><li><a href="global.html#obtenerGastoPorId">obtenerGastoPorId</a></li><li><a href="global.html#obtenerGastos">obtenerGastos</a></li><li><a href="global.html#obtenerGastosPorInstalacion">obtenerGastosPorInstalacion</a></li><li><a href="global.html#obtenerInscripciones">obtenerInscripciones</a></li><li><a href="global.html#obtenerInscripcionesCliente">obtenerInscripcionesCliente</a></li><li><a href="global.html#obtenerInstalaciones">obtenerInstalaciones</a></li><li><a href="global.html#obtenerInstalacionesReservadas">obtenerInstalacionesReservadas</a></li><li><a href="global.html#obtenerInstalacionesReservadasPerfil">obtenerInstalacionesReservadasPerfil</a></li><li><a href="global.html#obtenerMisInscripciones">obtenerMisInscripciones</a></li><li><a href="global.html#obtenerPagos">obtenerPagos</a></li><li><a href="global.html#obtenerPagosPerfil">obtenerPagosPerfil</a></li><li><a href="global.html#obtenerPagosPorId">obtenerPagosPorId</a></li><li><a href="global.html#obtenerTodasInscripciones">obtenerTodasInscripciones</a></li><li><a href="global.html#verificarCapacidadClase">verificarCapacidadClase</a></li><li><a href="global.html#verificarClaseExistente">verificarClaseExistente</a></li><li><a href="global.html#verificarInscripcionExistente">verificarInscripcionExistente</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Sun Dec 08 2024 22:57:01 GMT+0100 (hora estándar de Europa central)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

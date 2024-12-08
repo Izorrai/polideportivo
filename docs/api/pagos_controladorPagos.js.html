@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: pagos/controladorPagos.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: pagos/controladorPagos.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>// controladorPagos.js
+import Pago from "../../models/pago.js";
+import Reserva from "../../models/reserva.js";
+import errors from "../../helpers/errorPagos.js";
+
+/**
+ * Clase que maneja las operaciones relacionadas con los pagos.
+ */
+class ControladorPagos {
+    /**
+     * Obtiene todos los pagos.
+     * @returns {Promise&lt;Array>} Una promesa que resuelve una lista de pagos con sus reservas asociadas.
+     * @throws {Error} Si ocurre un error al obtener los pagos.
+     */
+    async obtenerTodosPagos() {
+        try {
+            const pagos = await Pago.findAll({
+                include: [{
+                    model: Reserva
+                }]
+            });
+            
+            if (!pagos) {
+                throw new errors.PAGO_LIST_ERROR();
+            }
+            
+            return pagos;
+        } catch (error) {
+            if (error instanceof errors.PAGO_LIST_ERROR) {
+                throw error;
+            }
+            throw new Error(`Error al obtener los pagos: ${error.message}`);
+        }
+    }
+
+    /**
+     * Obtiene un pago específico por su ID.
+     * @param {number} pago_id - El ID del pago que se desea obtener.
+     * @returns {Promise&lt;Object>} El pago con el ID proporcionado, incluyendo su reserva asociada.
+     * @throws {Error} Si no se encuentra el pago o si ocurre otro error.
+     */
+    async obtenerPagoPorId(pago_id) {
+        try {
+            const pago = await Pago.findByPk(pago_id, {
+                include: [{
+                    model: Reserva
+                }]
+            });
+
+            if (!pago) {
+                throw new errors.PAGO_NOT_FOUND();
+            }
+
+            return pago;
+        } catch (error) {
+            if (error instanceof errors.PAGO_NOT_FOUND) {
+                throw error;
+            }
+            throw new Error(`Error al obtener el pago: ${error.message}`);
+        }
+    }
+
+    /**
+     * Obtiene todos los pagos realizados por un cliente.
+     * @param {number} cliente_id - El ID del cliente cuyos pagos se desean obtener.
+     * @returns {Promise&lt;Array>} Una promesa que resuelve una lista de pagos del cliente, con las reservas asociadas.
+     * @throws {Error} Si ocurre un error al obtener los pagos.
+     */
+    async obtenerPagosUsuario(cliente_id) {
+        try {
+            const pagos = await Pago.findAll({
+                include: [{
+                    model: Reserva,
+                    where: { cliente_id },
+                    attributes: ['reserva_id', 'fecha', 'hora_inicio', 'hora_fin', 'cliente_id']
+                }],
+                order: [['fecha_pago', 'DESC']]
+            });
+
+            return pagos;
+        } catch (error) {
+            throw new Error(`Error al obtener los pagos del usuario: ${error.message}`);
+        }
+    }
+
+    /**
+ * Actualiza el método de pago de un pago existente.
+ * @param {number} pago_id - El ID del pago a actualizar.
+ * @param {string} metodo_pago - El nuevo método de pago.
+ * @returns {Promise&lt;Object>} El pago actualizado.
+ * @throws {Error} Si el método de pago no es válido o si ocurre un error.
+ */
+async actualizarMetodoPago(pago_id, metodo_pago) {
+    try {
+        // Verificar si el método de pago es válido
+        const metodosPagoValidos = ['efectivo', 'tarjeta', 'transferencia'];
+        if (!metodosPagoValidos.includes(metodo_pago)) {
+            throw new errors.METODO_PAGO_INVALIDO();
+        }
+
+        // Obtener el pago por su ID
+        const pago = await this.obtenerPagoPorId(pago_id);
+        
+        try {
+            // Actualizar el método de pago
+            const pagoActualizado = await pago.update({ metodo_pago });
+            return pagoActualizado;
+        } catch (error) {
+            throw new Error(`Error al actualizar el método de pago: ${error.message}`);
+        }
+    } catch (error) {
+        if (error instanceof errors.METODO_PAGO_INVALIDO || 
+            error instanceof errors.PAGO_NOT_FOUND) {
+            throw error;
+        }
+        throw error;
+    }
+}
+}
+
+export default ControladorPagos;</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="ControladorClases.html">ControladorClases</a></li><li><a href="ControladorCliente.html">ControladorCliente</a></li><li><a href="ControladorDeportes.html">ControladorDeportes</a></li><li><a href="ControladorEmpleados.html">ControladorEmpleados</a></li><li><a href="ControladorGastos.html">ControladorGastos</a></li><li><a href="ControladorInstalaciones.html">ControladorInstalaciones</a></li><li><a href="ControladorPagos.html">ControladorPagos</a></li></ul><h3>Global</h3><ul><li><a href="global.html#actualizarClase">actualizarClase</a></li><li><a href="global.html#actualizarDeporte">actualizarDeporte</a></li><li><a href="global.html#actualizarEmpleado">actualizarEmpleado</a></li><li><a href="global.html#actualizarGasto">actualizarGasto</a></li><li><a href="global.html#actualizarInstalaciones">actualizarInstalaciones</a></li><li><a href="global.html#actualizarPagos">actualizarPagos</a></li><li><a href="global.html#actualizarUsuario">actualizarUsuario</a></li><li><a href="global.html#actualizarUsuarioPerfil">actualizarUsuarioPerfil</a></li><li><a href="global.html#buscarUsuarioPorId">buscarUsuarioPorId</a></li><li><a href="global.html#crearClase">crearClase</a></li><li><a href="global.html#crearDeporte">crearDeporte</a></li><li><a href="global.html#crearEmpleado">crearEmpleado</a></li><li><a href="global.html#crearGasto">crearGasto</a></li><li><a href="global.html#crearInscripcion">crearInscripcion</a></li><li><a href="global.html#crearInscripcionPerfil">crearInscripcionPerfil</a></li><li><a href="global.html#crearInstalaciones">crearInstalaciones</a></li><li><a href="global.html#crearNuevaInscripcion">crearNuevaInscripcion</a></li><li><a href="global.html#crearReserva">crearReserva</a></li><li><a href="global.html#crearReservaPerfil">crearReservaPerfil</a></li><li><a href="global.html#crearUsuario">crearUsuario</a></li><li><a href="global.html#eliminarClase">eliminarClase</a></li><li><a href="global.html#eliminarDeporte">eliminarDeporte</a></li><li><a href="global.html#eliminarEmpleado">eliminarEmpleado</a></li><li><a href="global.html#eliminarGasto">eliminarGasto</a></li><li><a href="global.html#eliminarInstalaciones">eliminarInstalaciones</a></li><li><a href="global.html#eliminarUsuario">eliminarUsuario</a></li><li><a href="global.html#functions">functions</a></li><li><a href="global.html#getAllUsuarios">getAllUsuarios</a></li><li><a href="global.html#obtenerClasePorId">obtenerClasePorId</a></li><li><a href="global.html#obtenerClases">obtenerClases</a></li><li><a href="global.html#obtenerClasesDisponibles">obtenerClasesDisponibles</a></li><li><a href="global.html#obtenerDeportePorId">obtenerDeportePorId</a></li><li><a href="global.html#obtenerDeportes">obtenerDeportes</a></li><li><a href="global.html#obtenerEmpleadoPorId">obtenerEmpleadoPorId</a></li><li><a href="global.html#obtenerEmpleados">obtenerEmpleados</a></li><li><a href="global.html#obtenerEstadisticasGastos">obtenerEstadisticasGastos</a></li><li><a href="global.html#obtenerGastoPorId">obtenerGastoPorId</a></li><li><a href="global.html#obtenerGastos">obtenerGastos</a></li><li><a href="global.html#obtenerGastosPorInstalacion">obtenerGastosPorInstalacion</a></li><li><a href="global.html#obtenerInscripciones">obtenerInscripciones</a></li><li><a href="global.html#obtenerInscripcionesCliente">obtenerInscripcionesCliente</a></li><li><a href="global.html#obtenerInstalaciones">obtenerInstalaciones</a></li><li><a href="global.html#obtenerInstalacionesReservadas">obtenerInstalacionesReservadas</a></li><li><a href="global.html#obtenerInstalacionesReservadasPerfil">obtenerInstalacionesReservadasPerfil</a></li><li><a href="global.html#obtenerMisInscripciones">obtenerMisInscripciones</a></li><li><a href="global.html#obtenerPagos">obtenerPagos</a></li><li><a href="global.html#obtenerPagosPerfil">obtenerPagosPerfil</a></li><li><a href="global.html#obtenerPagosPorId">obtenerPagosPorId</a></li><li><a href="global.html#obtenerTodasInscripciones">obtenerTodasInscripciones</a></li><li><a href="global.html#verificarCapacidadClase">verificarCapacidadClase</a></li><li><a href="global.html#verificarClaseExistente">verificarClaseExistente</a></li><li><a href="global.html#verificarInscripcionExistente">verificarInscripcionExistente</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Sun Dec 08 2024 22:57:01 GMT+0100 (hora estándar de Europa central)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
