@@ -7,7 +7,7 @@ import pagos from "./rutaPagos.js";
 import usuarios from "./rutaClientes.js";
 import empleados from "./rutaEmpleados.js";
 import gastos from "./rutaGastos.js";
-import controladorCliente from "../controllers/clientes/controladorCliente.js";
+import ControladorCliente from "../controllers/clientes/controladorCliente.js";
 import jwt from "../config/jwt.js";
 import controladorApiAuth from "../controllers/auth/controladorApiAuth.js";
 
@@ -23,6 +23,7 @@ router.use((req, res, next) => {
     jwt.verify(req, res, next);
 });
 
+const controladorCliente = new ControladorCliente();
 
 router.get('/perfil', jwt.verify, async (req, res) => {
     try {

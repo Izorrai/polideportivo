@@ -1,6 +1,9 @@
-import controladorCliente from "../clientes/controladorCliente.js";
+import ControladorCliente from "../clientes/controladorCliente.js";
 import { verificarcontrasena } from "../../config/bcrypt.js";
 import errors  from "../../helpers/errorUsuarios.js"; 
+
+
+const controladorCliente = new ControladorCliente();
 
 async function registro (nombre,apellido,email,telefono,direccion,contrasena,confirmacionContrasena){
     if(contrasena!= confirmacionContrasena){

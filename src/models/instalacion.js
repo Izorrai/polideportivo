@@ -11,17 +11,17 @@ const Instalacion = sequelize.define('Instalacion', {
         type: DataTypes.STRING(100),
         allowNull: false
     },
-    descripcion: {
-        type: DataTypes.TEXT,
-        allowNull: true
+    precio_hora: {
+        type: DataTypes.DECIMAL(10,2),
+        allowNull: false
+    },
+    estado: {
+        type: DataTypes.ENUM('disponible', 'reservada'),
+        defaultValue: 'disponible'
     },
     capacidad: {
         type: DataTypes.INTEGER,
         allowNull: true
-    },
-    precio_hora: {
-        type: DataTypes.DECIMAL(10,2),
-        allowNull: false
     }
 }, {
     sequelize,

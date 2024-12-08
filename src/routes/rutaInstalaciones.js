@@ -10,6 +10,7 @@ const router = Router();
 // API Routes
 router.get('/api', controladorApiInstalaciones.obtenerInstalaciones)
 router.post('/api/crear-instalaciones', isAdmin, controladorApiInstalaciones.crearInstalaciones)
+router.post('/api/crear', isAdmin, controladorApiInstalaciones.crearReserva)
 // ADMIN
 router.delete('/api/eliminar/:id', isAdmin, controladorApiInstalaciones.eliminarInstalaciones);
 router.get('/api/actualizar/:id', isAdmin, controladorApiInstalaciones.actualizarInstalaciones)

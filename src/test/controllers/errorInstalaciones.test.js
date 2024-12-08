@@ -13,7 +13,7 @@ describe('Error Instalaciones', () => {
     describe('INSTALACION_YA_RESERVADA', () => {
         it('debe crear error con mensaje y estado correctos', () => {
             const error = new errors.INSTALACION_YA_RESERVADA();
-            expect(error.message).toBe('Ya existe una reserva para esta hora');
+            expect(error.message).toBe('La instalación ya está reservada para esa fecha y hora');
             expect(error.status).toBe(400);
         });
     });
@@ -29,7 +29,7 @@ describe('Error Instalaciones', () => {
     describe('RESERVA_ERROR', () => {
         it('debe crear error con mensaje y estado correctos', () => {
             const error = new errors.RESERVA_ERROR();
-            expect(error.message).toBe('Error al procesar la reserva');
+            expect(error.message).toBe('Error al crear la reserva');
             expect(error.status).toBe(500);
         });
     });

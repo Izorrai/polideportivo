@@ -1,3 +1,4 @@
+// controladorInstalaciones.js
 import Instalacion from "../../models/instalacion.js";
 import Reserva from '../../models/reserva.js';
 import Pago from '../../models/pago.js';
@@ -19,6 +20,9 @@ class ControladorInstalaciones {
             if (!instalaciones) throw new errors.INSTALACION_LIST_ERROR();
             return instalaciones;
         } catch (error) {
+            if (error instanceof errors.INSTALACION_LIST_ERROR) {
+                throw error;
+            }
             throw error;
         }
     }
@@ -30,29 +34,53 @@ class ControladorInstalaciones {
      * @throws {Error} Si no se encuentra la instalación.
      */
     async obtenerInstalacionPorId(instalacion_id) {
-        const instalacion = await Instalacion.findByPk(instalacion_id);
-        if (!instalacion) throw new errors.INSTALACION_NOT_FOUND();
-        return instalacion;
+        try {
+            const instalacion = await Instalacion.findByPk(instalacion_id);
+            if (!instalacion) throw new errors.INSTALACION_NOT_FOUND();
+            return instalacion;
+        } catch (error) {
+            if (error instanceof errors.INSTALACION_NOT_FOUND) {
+                throw error;
+            }
+            throw error;
+        }
     }
 
     /**
      * Crea una nueva instalación.
      * @param {Object} datosInstalacion - Los datos de la nueva instalación.
-     * @param {string} datosInstalacion.nombre - El nombre de la instalación.
-     * @param {number} datosInstalacion.precio_hora - El precio por hora de la instalación.
-     * @param {string} datosInstalacion.estado - El estado de la instalación (e.g., 'disponible', 'reservada').
      * @returns {Promise<Object>} La instalación creada.
-     * @throws {Error} Si faltan datos de la instalación o si ocurre un error al crear la instalación.
+     * @throws {Error} Si faltan datos o hay un error en la creación.
      */
     async crearInstalacion(datosInstalacion) {
-        if (!datosInstalacion.nombre || !datosInstalacion.precio_hora || !datosInstalacion.estado) {
-            throw new errors.DATOS_INSTALACION_INVALIDOS();
-        }
-
         try {
-            return await Instalacion.create(datosInstalacion);
+            // Solo permitir los campos válidos
+            const camposPermitidos = ['nombre', 'precio_hora', 'estado', 'capacidad'];
+            const datosValidos = {};
+            
+            // Filtrar solo los campos permitidos
+            camposPermitidos.forEach(campo => {
+                if (datosInstalacion[campo] !== undefined) {
+                    datosValidos[campo] = datosInstalacion[campo];
+                }
+            });
+
+            // Validar campos requeridos
+            if (!datosValidos.nombre || !datosValidos.precio_hora) {
+                throw new errors.DATOS_INSTALACION_INVALIDOS();
+            }
+
+            // Asegurarse de que estado tenga un valor válido
+            if (!datosValidos.estado) {
+                datosValidos.estado = 'disponible';
+            }
+
+            return await Instalacion.create(datosValidos);
         } catch (error) {
-            throw error;
+            if (error instanceof errors.DATOS_INSTALACION_INVALIDOS) {
+                throw error;
+            }
+            throw new Error('Error de base de datos');
         }
     }
 
@@ -64,9 +92,27 @@ class ControladorInstalaciones {
      * @throws {Error} Si no se encuentra la instalación.
      */
     async actualizarInstalacion(instalacion_id, datosActualizacion) {
-        const instalacion = await this.obtenerInstalacionPorId(instalacion_id);
-        await instalacion.update(datosActualizacion);
-        return instalacion;
+        try {
+            const instalacion = await this.obtenerInstalacionPorId(instalacion_id);
+            
+            // Filtrar campos permitidos
+            const camposPermitidos = ['nombre', 'precio_hora', 'estado', 'capacidad'];
+            const datosValidos = {};
+            
+            camposPermitidos.forEach(campo => {
+                if (datosActualizacion[campo] !== undefined) {
+                    datosValidos[campo] = datosActualizacion[campo];
+                }
+            });
+
+            await instalacion.update(datosValidos);
+            return instalacion;
+        } catch (error) {
+            if (error instanceof errors.INSTALACION_NOT_FOUND) {
+                throw error;
+            }
+            throw error;
+        }
     }
 
     /**
@@ -76,9 +122,16 @@ class ControladorInstalaciones {
      * @throws {Error} Si no se encuentra la instalación.
      */
     async eliminarInstalacion(instalacion_id) {
-        const instalacion = await this.obtenerInstalacionPorId(instalacion_id);
-        await instalacion.destroy();
-        return instalacion;
+        try {
+            const instalacion = await this.obtenerInstalacionPorId(instalacion_id);
+            await instalacion.destroy();
+            return instalacion;
+        } catch (error) {
+            if (error instanceof errors.INSTALACION_NOT_FOUND) {
+                throw error;
+            }
+            throw error;
+        }
     }
 
     /**
@@ -89,16 +142,20 @@ class ControladorInstalaciones {
      * @throws {Error} Si la instalación ya está reservada.
      */
     async verificarDisponibilidad(instalacion_id, fecha, hora_inicio) {
-        const reservaExistente = await Reserva.findOne({
-            where: {
-                instalacion_id,
-                fecha,
-                hora_inicio
-            }
-        });
+        try {
+            const reservaExistente = await Reserva.findOne({
+                where: {
+                    instalacion_id,
+                    fecha,
+                    hora_inicio
+                }
+            });
 
-        if (reservaExistente) {
-            throw new errors.INSTALACION_YA_RESERVADA();
+            if (reservaExistente) {
+                throw new errors.INSTALACION_YA_RESERVADA();
+            }
+        } catch (error) {
+            throw error;
         }
     }
 
@@ -107,97 +164,129 @@ class ControladorInstalaciones {
      * @returns {Promise<Array>} Lista de instalaciones con su estado y reservas.
      */
     async obtenerInstalacionesConReservas() {
-        const instalaciones = await Instalacion.findAll();
-        
-        return Promise.all(instalaciones.map(async (instalacion) => {
-            const reservas = await Reserva.findAll({
-                where: { instalacion_id: instalacion.instalacion_id }
-            });
+        try {
+            const instalaciones = await Instalacion.findAll();
+            
+            return Promise.all(instalaciones.map(async (instalacion) => {
+                const reservas = await Reserva.findAll({
+                    where: { instalacion_id: instalacion.instalacion_id }
+                });
 
-            return {
-                ...instalacion.toJSON(),
-                estado: reservas.length > 0 ? 'reservada' : 'disponible',
-                reservas: reservas.length > 0 ? reservas.map(reserva => ({
-                    fecha: reserva.fecha,
-                    hora_inicio: reserva.hora_inicio,
-                    hora_fin: reserva.hora_fin,
-                    cliente_id: reserva.cliente_id
-                })) : []
-            };
-        }));
+                return {
+                    ...instalacion.toJSON(),
+                    estado: reservas.length > 0 ? 'reservada' : 'disponible',
+                    reservas: reservas.length > 0 ? reservas.map(reserva => ({
+                        fecha: reserva.fecha,
+                        hora_inicio: reserva.hora_inicio,
+                        hora_fin: reserva.hora_fin,
+                        cliente_id: reserva.cliente_id
+                    })) : []
+                };
+            }));
+        } catch (error) {
+            throw new Error(`Error al obtener instalaciones con reservas: ${error.message}`);
+        }
     }
 
     /**
-     * Crea una nueva reserva para un cliente en una instalación.
-     * @param {Object} datosReserva - Los datos de la nueva reserva.
-     * @param {number} datosReserva.cliente_id - El ID del cliente que realiza la reserva.
-     * @param {number} datosReserva.instalacion_id - El ID de la instalación reservada.
-     * @param {number} datosReserva.deporte_id - El ID del deporte asociado a la reserva.
-     * @param {string} datosReserva.fecha - La fecha de la reserva.
-     * @param {string} datosReserva.hora_inicio - La hora de inicio de la reserva.
-     * @param {string} datosReserva.hora_fin - La hora de fin de la reserva.
+     * Crea una nueva reserva.
+     * @param {Object} datosReserva - Datos de la reserva.
      * @returns {Promise<Object>} La reserva creada.
-     * @throws {Error} Si la instalación no está disponible o si ocurre un error en la creación de la reserva.
+     * @throws {Error} Si hay error en la creación.
      */
     async crearReserva(datosReserva) {
-        const { cliente_id, instalacion_id, deporte_id, fecha, hora_inicio, hora_fin } = datosReserva;
-        
-        const instalacion = await this.obtenerInstalacionPorId(instalacion_id);
-        await this.verificarDisponibilidad(instalacion_id, fecha, hora_inicio);
+        try {
+            const { cliente_id, instalacion_id, deporte_id, fecha, hora_inicio, hora_fin } = datosReserva;
 
-        const nuevaReserva = await Reserva.create({
-            cliente_id,
-            instalacion_id,
-            deporte_id,
-            fecha,
-            hora_inicio,
-            hora_fin,
-            estado: 'confirmada'
-        });
+            // Validar campos requeridos
+            const camposRequeridos = ['cliente_id', 'instalacion_id', 'deporte_id', 'fecha', 'hora_inicio', 'hora_fin'];
+            const camposFaltantes = camposRequeridos.filter(campo => !datosReserva[campo]);
+            
+            if (camposFaltantes.length > 0) {
+                throw new errors.DATOS_RESERVA_INVALIDOS(`Faltan campos requeridos: ${camposFaltantes.join(', ')}`);
+            }
 
-        await Pago.create({
-            reserva_id: nuevaReserva.reserva_id,
-            monto: instalacion.precio_hora,
-            metodo_pago: 'efectivo',
-            fecha_pago: new Date(),
-            estado: 'COMPLETADO'
-        });
+            // Verificar instalación y disponibilidad
+            const instalacion = await this.obtenerInstalacionPorId(instalacion_id);
+            await this.verificarDisponibilidad(instalacion_id, fecha, hora_inicio);
 
-        await instalacion.update({ estado: 'reservada' });
+            // Crear la reserva
+            const nuevaReserva = await Reserva.create({
+                cliente_id,
+                instalacion_id,
+                deporte_id,
+                fecha,
+                hora_inicio,
+                hora_fin,
+                estado: 'confirmada'
+            }).catch(error => {
+                throw new errors.RESERVA_ERROR();
+            });
 
-        return nuevaReserva;
+            try {
+                // Crear el pago asociado
+                await Pago.create({
+                    reserva_id: nuevaReserva.reserva_id,
+                    monto: instalacion.precio_hora,
+                    metodo_pago: 'efectivo',
+                    fecha_pago: new Date(),
+                    estado: 'COMPLETADO'
+                });
+
+                // Actualizar estado de la instalación
+                await instalacion.update({ estado: 'reservada' });
+
+                return nuevaReserva;
+            } catch (error) {
+                // Si falla el pago o la actualización, propagar el error original
+                throw error;
+            }
+        } catch (error) {
+            if (error instanceof errors.INSTALACION_NOT_FOUND || 
+                error instanceof errors.INSTALACION_YA_RESERVADA ||
+                error instanceof errors.DATOS_RESERVA_INVALIDOS ||
+                error instanceof errors.RESERVA_ERROR) {
+                throw error;
+            }
+            // Si es un error no manejado, propagarlo tal cual
+            throw error;
+        }
     }
 
     /**
      * Obtiene todas las reservas de un usuario.
      * @param {number} cliente_id - El ID del cliente.
-     * @returns {Promise<Array>} Lista de reservas del cliente con detalles de la instalación.
+     * @returns {Promise<Array>} Lista de reservas del cliente.
      */
     async obtenerReservasUsuario(cliente_id) {
-        const reservasUsuario = await Reserva.findAll({
-            where: { cliente_id },
-            include: [{
-                model: Instalacion,
-                attributes: ['instalacion_id', 'nombre', 'estado', 'precio_hora']
-            }],
-            order: [
-                ['fecha', 'DESC'],
-                ['hora_inicio', 'ASC']
-            ]
-        });
+        try {
+            const reservasUsuario = await Reserva.findAll({
+                where: { cliente_id },
+                include: [{
+                    model: Instalacion,
+                    attributes: ['instalacion_id', 'nombre', 'estado', 'precio_hora']
+                }],
+                order: [
+                    ['fecha', 'DESC'],
+                    ['hora_inicio', 'ASC']
+                ]
+            });
 
-        return reservasUsuario.map(reserva => ({
-            reserva_id: reserva.reserva_id,
-            fecha: reserva.fecha,
-            hora_inicio: reserva.hora_inicio,
-            hora_fin: reserva.hora_fin,
-            estado: reserva.estado,
-            instalacion: {
-                id: reserva.Instalacion.instalacion_id,
-                nombre: reserva.Instalacion.nombre,
-                precio_hora: reserva.Instalacion.precio_hora
-            }
-        }));
+            return reservasUsuario.map(reserva => ({
+                reserva_id: reserva.reserva_id,
+                fecha: reserva.fecha,
+                hora_inicio: reserva.hora_inicio,
+                hora_fin: reserva.hora_fin,
+                estado: reserva.estado,
+                instalacion: {
+                    id: reserva.Instalacion.instalacion_id,
+                    nombre: reserva.Instalacion.nombre,
+                    precio_hora: reserva.Instalacion.precio_hora
+                }
+            }));
+        } catch (error) {
+            throw new Error('Error al consultar reservas');
+        }
     }
 }
 

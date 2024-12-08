@@ -1,5 +1,9 @@
-import ControladorInstalaciones from "./controladorInstalaciones.js"
+// controladorApiInstalaciones.js
+import ControladorInstalaciones from "./controladorInstalaciones.js";
 
+/**
+ * Obtiene todas las instalaciones
+ */
 async function obtenerInstalaciones(req, res) {
     const controlador = new ControladorInstalaciones();
     try {
@@ -9,14 +13,18 @@ async function obtenerInstalaciones(req, res) {
             data: instalaciones
         });
     } catch (error) {
-        error.status ? res.status(error.status) : res.status(500);
-        res.json({
+        console.error('Error al obtener instalaciones:', error);
+        const status = error.status || 500;
+        res.status(status).json({
             status: 'error',
             message: error.message
         });
     }
 }
 
+/**
+ * Crea una nueva instalación
+ */
 async function crearInstalaciones(req, res) {
     const controlador = new ControladorInstalaciones();
     try {
@@ -27,14 +35,18 @@ async function crearInstalaciones(req, res) {
             data: nuevaInstalacion
         });
     } catch (error) {
-        error.status ? res.status(error.status) : res.status(500);
-        res.json({
+        console.error('Error al crear instalación:', error);
+        const status = error.status || 500;
+        res.status(status).json({
             status: 'error',
             message: error.message
         });
     }
 }
 
+/**
+ * Actualiza una instalación existente
+ */
 async function actualizarInstalaciones(req, res) {
     const controlador = new ControladorInstalaciones();
     try {
@@ -45,14 +57,18 @@ async function actualizarInstalaciones(req, res) {
             data: instalacionActualizada
         });
     } catch (error) {
-        error.status ? res.status(error.status) : res.status(500);
-        res.json({
+        console.error('Error al actualizar instalación:', error);
+        const status = error.status || 500;
+        res.status(status).json({
             status: 'error',
             message: error.message
         });
     }
 }
 
+/**
+ * Elimina una instalación
+ */
 async function eliminarInstalaciones(req, res) {
     const controlador = new ControladorInstalaciones();
     try {
@@ -63,14 +79,18 @@ async function eliminarInstalaciones(req, res) {
             data: instalacionEliminada
         });
     } catch (error) {
-        error.status ? res.status(error.status) : res.status(500);
-        res.json({
+        console.error('Error al eliminar instalación:', error);
+        const status = error.status || 500;
+        res.status(status).json({
             status: 'error',
             message: error.message
         });
     }
 }
 
+/**
+ * Obtiene todas las instalaciones con sus reservas
+ */
 async function obtenerInstalacionesReservadas(req, res) {
     const controlador = new ControladorInstalaciones();
     try {
@@ -80,14 +100,63 @@ async function obtenerInstalacionesReservadas(req, res) {
             data: instalaciones
         });
     } catch (error) {
-        error.status ? res.status(error.status) : res.status(500);
-        res.json({
+        console.error('Error al obtener instalaciones reservadas:', error);
+        const status = error.status || 500;
+        res.status(status).json({
             status: 'error',
             message: error.message
         });
     }
 }
 
+/**
+ * Crea una nueva reserva para el usuario autenticado
+ */
+async function crearReserva(req, res) {
+  
+
+    const {cliente_id, instalacion_id, deporte_id, fecha, hora_inicio, hora_fin } = req.body;
+    
+    if (!instalacion_id || !deporte_id || !fecha || !hora_inicio || !hora_fin) {
+        return res.status(400).json({
+            status: 'error',
+            message: 'Faltan campos requeridos para la reserva'
+        });
+    }
+
+    const controlador = new ControladorInstalaciones();
+    try {
+        // Crear objeto de reserva con los datos necesarios
+        const datosReserva = {
+            cliente_id,
+            instalacion_id,
+            deporte_id,
+            fecha,
+            hora_inicio,
+            hora_fin
+        };
+
+        const nuevaReserva = await controlador.crearReserva(datosReserva);
+
+        res.status(201).json({
+            status: 'success',
+            message: 'Reserva creada exitosamente',
+            data: nuevaReserva
+        });
+    } catch (error) {
+        console.error('Error al crear reserva');
+        const status = error.status || 500;
+        res.status(status).json({
+            status: 'error',
+            message: error.message
+        });
+    }
+}
+
+
+/**
+ * Crea una nueva reserva para el usuario autenticado
+ */
 async function crearReservaPerfil(req, res) {
     if (!req.user?.cliente_id) {
         return res.status(401).json({
@@ -96,12 +165,28 @@ async function crearReservaPerfil(req, res) {
         });
     }
 
+    const { instalacion_id, deporte_id, fecha, hora_inicio, hora_fin } = req.body;
+    
+    if (!instalacion_id || !deporte_id || !fecha || !hora_inicio || !hora_fin) {
+        return res.status(400).json({
+            status: 'error',
+            message: 'Faltan campos requeridos para la reserva'
+        });
+    }
+
     const controlador = new ControladorInstalaciones();
     try {
-        const nuevaReserva = await controlador.crearReserva({
-            ...req.body,
-            cliente_id: req.user.cliente_id
-        });
+        // Crear objeto de reserva con los datos necesarios
+        const datosReserva = {
+            cliente_id: req.user.cliente_id,
+            instalacion_id,
+            deporte_id,
+            fecha,
+            hora_inicio,
+            hora_fin
+        };
+
+        const nuevaReserva = await controlador.crearReserva(datosReserva);
 
         res.status(201).json({
             status: 'success',
@@ -109,14 +194,18 @@ async function crearReservaPerfil(req, res) {
             data: nuevaReserva
         });
     } catch (error) {
-        error.status ? res.status(error.status) : res.status(500);
-        res.json({
+        console.error('Error al crear reserva');
+        const status = error.status || 500;
+        res.status(status).json({
             status: 'error',
             message: error.message
         });
     }
 }
 
+/**
+ * Obtiene las reservas del usuario autenticado
+ */
 async function obtenerInstalacionesReservadasPerfil(req, res) {
     if (!req.user?.cliente_id) {
         return res.status(401).json({
@@ -133,8 +222,9 @@ async function obtenerInstalacionesReservadasPerfil(req, res) {
             data: reservas
         });
     } catch (error) {
-        error.status ? res.status(error.status) : res.status(500);
-        res.json({
+        console.error('Error al obtener reservas del usuario:', error);
+        const status = error.status || 500;
+        res.status(status).json({
             status: 'error',
             message: error.message
         });
@@ -148,6 +238,7 @@ export const functions = {
     actualizarInstalaciones,
     crearInstalaciones,
     crearReservaPerfil,
+    crearReserva,
     eliminarInstalaciones
 };
 

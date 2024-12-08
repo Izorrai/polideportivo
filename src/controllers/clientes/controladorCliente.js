@@ -6,7 +6,7 @@ import errors from "../../helpers/errorUsuarios.js";
  * Controlador para gestionar las operaciones de los clientes.
  */
 class ControladorCliente {
-  
+
   /**
    * Obtiene todos los usuarios.
    * @returns {Promise<Array>} Lista de todos los usuarios.
@@ -26,7 +26,7 @@ class ControladorCliente {
    */
   async buscarUserPorId(id) {
     const usuario = await Cliente.findByPk(id, {
-      attributes: { exclude: ['contrasena'] } 
+      attributes: { exclude: ['contrasena'] }
     });
     if (!usuario) throw new errors.USER_NOT_FOUND();
     return usuario;
@@ -39,16 +39,13 @@ class ControladorCliente {
    * @throws {Error} Si ocurre un error durante la búsqueda.
    */
   async buscarPorEmail(email) {
-    console.log('Buscando usuario con email:', email);
     try {
       const usuario = await Cliente.findOne({
         where: { email: email }
       });
-      console.log('Usuario encontrado:', usuario);
       return usuario;
     } catch (error) {
-      console.error('Error al buscar usuario:', error);
-      throw error;
+      throw new Error('Error al buscar usuario');
     }
   }
 
@@ -64,7 +61,7 @@ class ControladorCliente {
    * @returns {Promise<Object>} El nuevo usuario creado.
    * @throws {Error} Si faltan datos o el usuario ya existe.
    */
-  async crearUsuario(nombre, apellido, email, telefono, direccion, contrasena, role = "CLIENT") {
+  async crearUsuario(nombre, apellido, email, telefono, direccion, contrasena, roles = "CLIENTE") {
     if (!nombre || !apellido || !email || !telefono || !direccion || !contrasena) {
       throw new errors.FALTAN_DATOS_USUARIO();
     }
@@ -80,7 +77,7 @@ class ControladorCliente {
       telefono,
       direccion,
       contrasena: hash,
-      role
+      roles 
     });
     return nuevoUsuario;
   }
@@ -110,7 +107,7 @@ class ControladorCliente {
     usuario.telefono = telefono || usuario.telefono;
     usuario.direccion = direccion || usuario.direccion;
     usuario.roles = roles || usuario.roles;
-    
+
     if (contrasena) {
       const hash = await hashcontrasena(contrasena);
       usuario.contrasena = hash;
@@ -119,6 +116,43 @@ class ControladorCliente {
     await usuario.save();
     return usuario;
   }
+
+  /**
+   * Actualiza el perfil de un usuario (en el contexto del usuario autenticado).
+   * @param {number} cliente_id - El ID del cliente a actualizar.
+   * @param {string} email - El nuevo correo electrónico del usuario (opcional).
+   * @param {string} contrasena - La nueva contraseña del usuario (opcional).
+   * @param {string} nombre - El nuevo nombre del usuario (opcional).
+   * @param {string} apellido - El nuevo apellido del usuario (opcional).
+   * @param {string} telefono - El nuevo teléfono del usuario (opcional).
+   * @param {string} direccion - La nueva dirección del usuario (opcional).
+   * @param {string} roles - Los nuevos roles del usuario (opcional).
+   * @returns {Promise<Object>} El usuario actualizado.
+   * @throws {Error} Si el usuario no se encuentra.
+   */
+  async actualizarUsuarioPerfil(cliente_id, email, contrasena, nombre, apellido, telefono, direccion, roles) {
+    const usuario = await Cliente.findByPk(cliente_id);
+    if (!usuario) {
+      throw new errors.USER_NOT_FOUND();
+    }
+
+    usuario.email = email || usuario.email;
+    usuario.contrasena = contrasena || usuario.contrasena;
+    usuario.nombre = nombre || usuario.nombre;
+    usuario.apellido = apellido || usuario.apellido;
+    usuario.telefono = telefono || usuario.telefono;
+    usuario.direccion = direccion || usuario.direccion;
+    usuario.roles = roles || usuario.roles;
+
+    if (contrasena) {
+      const hash = await hashcontrasena(contrasena);
+      usuario.contrasena = hash;
+    }
+
+    await usuario.save();
+    return usuario;
+  }
+
 
   /**
    * Elimina un usuario.

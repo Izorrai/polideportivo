@@ -25,24 +25,25 @@ class USUARIO_NO_CREADO extends Error {
     this.status = 500;
   }
 }
+
 class USER_ALREADY_EXISTS extends Error {
-  constructor(){
-      super("El usuario ya existe");
-      this.status=409;
+  constructor() {
+    super("El usuario ya existe");
+    this.status = 409;
   }
 }
 
-class PASSWORDS_DONT_MATCH extends Error{
-  constructor(){
-      super("Las contrasenas no coinciden");
-      this.status=400;
+class PASSWORDS_DONT_MATCH extends Error {
+  constructor() {
+    super("Las contrasenas no coinciden");
+    this.status = 400;
   }
 }
 
-class INVALID_CREDENTIALS extends Error{
-  constructor(){
-      super("Credenciales inválidas");
-      this.status=400;
+class INVALID_CREDENTIALS extends Error {
+  constructor() {
+    super("Credenciales inválidas");
+    this.status = 400;
   }
 }
 

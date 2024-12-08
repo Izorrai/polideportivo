@@ -141,7 +141,7 @@ describe('ControladorInstalaciones', () => {
 
             await expect(controlador.crearReserva(datosReserva))
                 .rejects
-                .toThrow('Ya existe una reserva para esta hora');
+                .toThrow('La instalación ya está reservada para esa fecha y hora');
         });
     });
 

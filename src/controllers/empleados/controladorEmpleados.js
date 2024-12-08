@@ -40,17 +40,30 @@ class ControladorEmpleados {
    * @throws {Error} Si el empleado con el mismo DNI o email ya existe.
    */
   async verificarEmpleadoExistente(dni, email) {
-    const existeDNI = await Empleado.findOne({
-      where: { dni }
-    });
-    const existeEmail = await Empleado.findOne({
-      where: { email }
-    });
-    
-    if (existeDNI || existeEmail) {
-      throw new errors.EMPLEADO_YA_EXISTE();
+    try {
+        // Verificar DNI
+        const existeDNI = await Empleado.findOne({
+            where: { dni }
+        });
+        
+        if (existeDNI) {
+            throw new errors.EMPLEADO_YA_EXISTE();
+        }
+
+        // Verificar email solo si se proporciona uno
+        if (email) {
+            const existeEmail = await Empleado.findOne({
+                where: { email }
+            });
+            
+            if (existeEmail) {
+                throw new errors.EMPLEADO_YA_EXISTE();
+            }
+        }
+    } catch (error) {
+        throw error;
     }
-  }
+}
 
   /**
    * Crea un nuevo empleado.
@@ -88,18 +101,21 @@ class ControladorEmpleados {
   async actualizarEmpleado(empleado_id, datosActualizacion) {
     const empleado = await this.obtenerEmpleadoPorId(empleado_id);
     
+    // Verificar si se está intentando actualizar DNI o email
     if (datosActualizacion.dni || datosActualizacion.email) {
-      if (datosActualizacion.dni !== empleado.dni || datosActualizacion.email !== empleado.email) {
-        await this.verificarEmpleadoExistente(
-          datosActualizacion.dni || empleado.dni,
-          datosActualizacion.email || empleado.email
-        );
-      }
+        // Solo verificar si al menos uno de los valores es diferente al actual
+        if (datosActualizacion.dni !== empleado.dni || datosActualizacion.email !== empleado.email) {
+            // Usar el valor actual si no se proporciona uno nuevo
+            await this.verificarEmpleadoExistente(
+                datosActualizacion.dni || empleado.dni,
+                datosActualizacion.email || empleado.email
+            );
+        }
     }
 
     await empleado.update(datosActualizacion);
     return empleado;
-  }
+}
 
   /**
    * Elimina un empleado.
@@ -113,5 +129,7 @@ class ControladorEmpleados {
     return empleado;
   }
 }
+
+
 
 export default ControladorEmpleados;
